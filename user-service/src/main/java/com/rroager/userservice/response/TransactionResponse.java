@@ -14,7 +14,7 @@ import java.sql.Date;
 public class TransactionResponse {
     public enum TransactionType { DEPOSIT, WITHDRAW }
 
-    private Long transactionId;
+    private Long id;
 
     private Long amount;
 

@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class WalletResponse {
 
-    private String walletId;
+    private String id;
 
     private Long balance;
 

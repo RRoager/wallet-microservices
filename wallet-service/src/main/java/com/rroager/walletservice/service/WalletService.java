@@ -15,8 +15,8 @@ public class WalletService {
         this.walletRepository = walletRepository;
     }
 
-    public Wallet getById (String id) {
-        logger.info("(getById) Getting wallet with ID: " + id);
+    public Wallet getWalletById(String id) {
+        logger.info("(getWalletById) Getting wallet with ID: " + id);
 
         return walletRepository.findById(id).orElse(null);
     }
