@@ -3,10 +3,7 @@ package com.rroager.walletservice.controller;
 import com.rroager.walletservice.entity.Wallet;
 import com.rroager.walletservice.service.TransactionService;
 import com.rroager.walletservice.service.WalletService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/wallet")
@@ -22,5 +19,10 @@ public class WalletController {
     @GetMapping("/{id}")
     public Wallet getWalletById(@PathVariable String id) {
         return walletService.getWalletById(id);
+    }
+
+    @PostMapping("/create-wallet")
+    public Wallet createWallet(@RequestBody Wallet wallet) {
+        return walletService.createWallet(wallet);
     }
 }
