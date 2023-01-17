@@ -22,7 +22,7 @@ public class WalletController {
     }
 
     @PostMapping("/create-wallet")
-    public Wallet createWallet(@RequestBody Wallet wallet) {
-        return walletService.createWallet(wallet);
+    public Wallet createWallet(@RequestBody String id) {
+        return walletService.createWallet(id);
     }
 }

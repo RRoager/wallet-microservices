@@ -21,9 +21,11 @@ public class WalletService {
         return walletRepository.findById(id).orElse(null);
     }
 
-    // TODO Generate UUID when creating wallet and connect it to the user
     // TODO Create wallet when creating user
-    public Wallet createWallet(Wallet wallet) {
-        return walletRepository.save(wallet);
+    // TODO Generate UUID when creating wallet and connect it to the user
+    public Wallet createWallet(String id) {
+        logger.info("(createWallet) Creating wallet with ID: " + id);
+
+        return walletRepository.save(new Wallet(id));
     }
 }
