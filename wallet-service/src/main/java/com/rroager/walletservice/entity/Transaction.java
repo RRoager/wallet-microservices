@@ -1,9 +1,6 @@
 package com.rroager.walletservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,15 +12,14 @@ import java.sql.Date;
 @NoArgsConstructor
 @Entity
 public class Transaction {
-    public enum TransactionType { DEPOSIT, WITHDRAW }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private long amount;
+    private Long amount;
 
-    private Date date;
+    private Date transactionDate;
 
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 }

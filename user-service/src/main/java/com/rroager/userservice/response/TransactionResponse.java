@@ -19,9 +19,9 @@ public class TransactionResponse {
 
     private Long transactionId;
 
-    private long amount;
+    private Long amount;
 
-    private Date date;
+    private Date transactionDate;
 
     private TransactionType transactionType;
 }

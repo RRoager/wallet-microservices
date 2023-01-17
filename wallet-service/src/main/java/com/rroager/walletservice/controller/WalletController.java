@@ -17,7 +17,6 @@ public class WalletController {
         this.walletService = walletService;
     }
 
-    // TODO Fix error [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Index 2 out of bounds for length 2]
     @GetMapping("/{id}")
     public Wallet getById(@PathVariable String id) {
         return walletService.getById(id);
