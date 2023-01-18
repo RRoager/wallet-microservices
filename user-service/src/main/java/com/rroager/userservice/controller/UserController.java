@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    public ResponseEntity<String> createUser(@RequestBody User user) {
         if(userService.userWithEmailExists(user.getEmail())) {
             return new ResponseEntity<>("Email is already taken. Please choose another email.", HttpStatus.BAD_REQUEST);
         }
