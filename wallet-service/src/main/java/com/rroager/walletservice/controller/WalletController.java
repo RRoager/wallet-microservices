@@ -26,7 +26,7 @@ public class WalletController {
     }
 
     @PostMapping("/create-wallet")
-    public UUID createWallet() {
-        return walletService.createWallet().getId();
+    public ResponseEntity<UUID> createWallet() {
+        return new ResponseEntity<>(walletService.createWallet().getId(), HttpStatus.OK);
     }
 }
