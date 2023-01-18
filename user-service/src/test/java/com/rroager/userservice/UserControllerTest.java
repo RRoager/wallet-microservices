@@ -66,6 +66,7 @@ public class UserControllerTest {
     }
 
 
+    // Used to send objects as JSON strings
     public static String asJsonString(final Object obj) {
         try {
             final ObjectMapper mapper = new ObjectMapper();
