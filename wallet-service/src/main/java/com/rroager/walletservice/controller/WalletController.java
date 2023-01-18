@@ -3,6 +3,8 @@ package com.rroager.walletservice.controller;
 import com.rroager.walletservice.entity.Wallet;
 import com.rroager.walletservice.service.TransactionService;
 import com.rroager.walletservice.service.WalletService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -19,8 +21,8 @@ public class WalletController {
     }
 
     @GetMapping("/{id}")
-    public Wallet getWalletById(@PathVariable UUID id) {
-        return walletService.getWalletById(id);
+    public ResponseEntity<Wallet> getWalletById(@PathVariable UUID id) {
+        return new ResponseEntity<>(walletService.getWalletById(id), HttpStatus.OK);
     }
 
     @PostMapping("/create-wallet")
