@@ -29,4 +29,8 @@ public class WalletController {
     public ResponseEntity<UUID> createWallet() {
         return new ResponseEntity<>(walletService.createWallet().getId(), HttpStatus.OK);
     }
+
+    // TODO create ("/transaction/{id}") getTransaction(Long transactionID) GET request
+    // TODO create ("/transaction-history/{fromDate}/to/{toDate}") getTransactionHistory(Date from, Date to) GET request
+    // TODO create ("/transaction/{transactionType}/amount/{amount}") makeTransaction(TransactionType transactionType, Double amount) POST request
 }
