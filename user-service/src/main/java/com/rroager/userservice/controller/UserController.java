@@ -36,6 +36,4 @@ public class UserController {
 
         return new ResponseEntity<>("User created successfully", HttpStatus.OK);
     }
-
-
 }
