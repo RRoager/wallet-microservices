@@ -17,23 +17,27 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/wallet")
-    public WalletResponse getWalletForUser(@PathVariable Long id) {
-        return userService.getWalletForUser(userService.getUserById(id).getWalletId());
+    public ResponseEntity<WalletResponse> getWalletForUser(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.getWalletForUser(userService.getUserById(id).getWalletId()), HttpStatus.OK);
     }
 
     @PostMapping("/create-user")
     public ResponseEntity<?> createUser(@RequestBody User user) {
-        User newUser = userService.createUser(user);
-
-        if (newUser == null) {
+        if(userService.userWithEmailExists(user.getEmail())) {
             return new ResponseEntity<>("Email is already taken. Please choose another email.", HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>("User created successfully", HttpStatus.OK);
+        if (userService.passwordIsValid(user.getPassword())) {
+            User newUser = userService.createUser(user);
+
+            return new ResponseEntity<>("User created successfully with ID: " + newUser.getId(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Invalid password. Password must be at least 6 characters long and include one uppercase, one lowercase, one special character and one numeric value", HttpStatus.BAD_REQUEST);
+        }
     }
 }

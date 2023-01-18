@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.regex.*;
 
 import java.util.UUID;
 
@@ -59,10 +60,6 @@ public class UserService {
      * Saves new user to db
      */
     public User createUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            return null;
-        }
-
         logger.info("(createUser) Creating user with email: " + user.getEmail());
 
         UUID walletId = feignClient.createWallet();
@@ -81,5 +78,34 @@ public class UserService {
         userRepository.save(newUser);
 
         return newUser;
+    }
+
+    /**
+     *
+     * @param email (String)
+     * @return Boolean
+     * Checks if email is already stored in db
+     */
+    public Boolean userWithEmailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    /**
+     *
+     * @param password (String)
+     * @return Boolean
+     * Checks that password is at least 6 characters long
+     * Creates regex for all required characters (uppercase, lowercase, special character and numeric value)
+     * Checks if password matches regex
+     */
+    public Boolean passwordIsValid(String password) {
+        if (password.length() < 6) {
+            return false;
+        }
+
+        String regex = "^(?=.*?\\p{Lu})(?=.*?\\p{Ll})(?=.*?\\d)" +
+                "(?=.*?[`~!@#$%^&*()\\-_=+\\\\|\\[{\\]};:'\",<.>/?]).*$";
+
+        return Pattern.compile(regex).matcher(password).matches();
     }
 }

@@ -45,7 +45,7 @@ public class UserControllerTest {
 
     @Test
     public void createUserTest_Success() throws Exception {
-        User testUser = new User(UUID.randomUUID(), "Test", "Testesen", "test@test.com", "test", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+        User testUser = new User(UUID.randomUUID(), "Test", "Testesen", "test@test.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
         mvc.perform(MockMvcRequestBuilders
                 .post("/api/user/create-user")
@@ -55,8 +55,19 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUserTest_Fail() throws Exception {
-        User testUser = new User(UUID.randomUUID(), "Test", "Testesen", "rasmus-roager@hotmail.com", "test", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+    public void createUserTest_EmailExists() throws Exception {
+        User testUser = new User(UUID.randomUUID(), "Test", "Testesen", "rasmus-roager@hotmail.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/create-user")
+                        .content(asJsonString(testUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void createUserTest_InvalidPassword() throws Exception {
+        User testUser = new User(UUID.randomUUID(), "Test", "Testesen", "test@test.com", "test", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/create-user")
