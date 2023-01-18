@@ -5,6 +5,8 @@ import com.rroager.walletservice.service.TransactionService;
 import com.rroager.walletservice.service.WalletService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/wallet")
 public class WalletController {
@@ -17,12 +19,12 @@ public class WalletController {
     }
 
     @GetMapping("/{id}")
-    public Wallet getWalletById(@PathVariable String id) {
+    public Wallet getWalletById(@PathVariable UUID id) {
         return walletService.getWalletById(id);
     }
 
     @PostMapping("/create-wallet")
-    public Wallet createWallet(@RequestBody String id) {
-        return walletService.createWallet(id);
+    public UUID createWallet() {
+        return walletService.createWallet().getId();
     }
 }
