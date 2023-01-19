@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class TransactionService {
@@ -27,7 +26,7 @@ public class TransactionService {
      * Retrieves transaction based on id
      * If no transaction exists with the id, returns null
      */
-    public Transaction getTransactionByIdAndWalletId(Integer id, UUID walletId) {
+    public Transaction getTransactionByIdAndWalletId(Integer id, Integer walletId) {
         logger.info("(getTransactionByIdAndWalletId) Getting transaction with ID: " + id + ". For wallet with ID: " + walletId);
 
         return transactionRepository.findByIdAndWalletId(id, walletId).orElse(null);
@@ -35,11 +34,11 @@ public class TransactionService {
 
     /**
      *
-     * @param walletId (UUID)
+     * @param walletId (Integer)
      * @return List<Transaction>
      * Retrieves all transactions for a specific walletId
      */
-    public List<Transaction> getAllTransactionsWalletId(UUID walletId) {
+    public List<Transaction> getAllTransactionsWalletId(Integer walletId) {
         logger.info("(getTransactionsWalletId) Getting transactions for wallet with ID: " + walletId);
 
         return transactionRepository.findAllByWalletId(walletId);
@@ -47,13 +46,13 @@ public class TransactionService {
 
     /**
      *
-     * @param walletId (UUID)
+     * @param walletId (Integer)
      * @param fromDate (Date)
      * @param toDate (Date)
      * @return List<Transaction>
      * Retrieves all transactions for a specific walletId between two dates
      */
-    public List<Transaction> getAllByWalletIdFromDateToDate(UUID walletId, Date fromDate, Date toDate) {
+    public List<Transaction> getAllByWalletIdFromDateToDate(Integer walletId, Date fromDate, Date toDate) {
         logger.info("(getTransactionsWalletId) Getting transactions for wallet with ID: " + walletId);
 
         return transactionRepository.findAllByWalletIdFromDateToDate(walletId, fromDate, toDate);
@@ -61,12 +60,12 @@ public class TransactionService {
 
     /**
      *
-     * @param walletId (UUID)
+     * @param walletId (Integer)
      * @param transaction (Transaction)
      * @return Transaction
      * Creates new transaction for a specific walletId with details given
      */
-    public Transaction createTransaction(UUID walletId, Transaction transaction) {
+    public Transaction createTransaction(Integer walletId, Transaction transaction) {
         logger.info("(createTransaction) Creating transaction for wallet with ID: " + walletId);
 
         return transactionRepository.save(new Transaction(transaction.getWalletId(), transaction.getAmount(), transaction.getTransactionType()));

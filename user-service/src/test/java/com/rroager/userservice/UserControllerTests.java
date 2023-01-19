@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.sql.Date;
-import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,7 +44,7 @@ public class UserControllerTests {
 
     @Test
     public void createUserTest_Success() throws Exception {
-        User testUser = new User(UUID.randomUUID(), "Test", "Testesen", "test@test.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+        User testUser = new User(123, "Test", "Testesen", "test@test.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
         mvc.perform(MockMvcRequestBuilders
                 .post("/api/user/create-user")
@@ -56,7 +55,7 @@ public class UserControllerTests {
 
     @Test
     public void createUserTest_EmailExists() throws Exception {
-        User testUser = new User(UUID.randomUUID(), "Test", "Testesen", "rasmus-roager@hotmail.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+        User testUser = new User(123, "Test", "Testesen", "rasmus-roager@hotmail.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/create-user")
@@ -67,7 +66,7 @@ public class UserControllerTests {
 
     @Test
     public void createUserTest_InvalidPassword() throws Exception {
-        User testUser = new User(UUID.randomUUID(), "Test", "Testesen", "test@test.com", "test", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+        User testUser = new User(123, "Test", "Testesen", "test@test.com", "test", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/create-user")

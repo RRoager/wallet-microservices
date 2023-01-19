@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/api/wallet")
 public class WalletController {
@@ -18,12 +16,12 @@ public class WalletController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Wallet> getWalletById(@PathVariable UUID id) {
+    public ResponseEntity<Wallet> getWalletById(@PathVariable Integer id) {
         return new ResponseEntity<>(walletService.getWalletById(id), HttpStatus.OK);
     }
 
     @PostMapping("/create-wallet")
-    public ResponseEntity<UUID> createWallet() {
-        return new ResponseEntity<>(walletService.createWallet().getId(), HttpStatus.CREATED);
+    public ResponseEntity<Wallet> createWallet() {
+        return new ResponseEntity<>(walletService.createWallet(), HttpStatus.CREATED);
     }
 }

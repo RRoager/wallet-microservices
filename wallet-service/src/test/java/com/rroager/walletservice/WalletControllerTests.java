@@ -22,11 +22,11 @@ public class WalletControllerTests {
     @Test
     public void getWalletByIdTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get("/api/wallet/f753f2cc-1e67-4ad0-b618-ed9450badf0e")
+                .get("/api/wallet/1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("f753f2cc-1e67-4ad0-b618-ed9450badf0e"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class WalletControllerTests {
         mvc.perform(MockMvcRequestBuilders
                 .post("/api/wallet/create-wallet")
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json"));
     }
 }

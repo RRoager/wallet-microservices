@@ -8,9 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.regex.*;
 
-import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -32,7 +31,7 @@ public class UserService {
      * Retrieves user based on users id
      * If no user exists with the id, returns null
      */
-    public User getUserById(Long id) {
+    public User getUserById(Integer id) {
         logger.info("(getUserById) Getting user with ID: " + id);
 
         return userRepository.findById(id).orElse(null);
@@ -40,11 +39,11 @@ public class UserService {
 
     /**
      *
-     * @param walletId (UUID)
+     * @param walletId (Integer)
      * @return WalletResponse
      * Retrieves users wallet from WalletService
      */
-    public WalletResponse getWalletForUser(UUID walletId) {
+    public WalletResponse getWalletForUser(Integer walletId) {
         logger.info("(getWalletForUser) Getting wallet with ID: " + walletId);
 
         return feignClient.getWalletById(walletId);
@@ -62,7 +61,7 @@ public class UserService {
     public User createUser(User user) {
         logger.info("(createUser) Creating user with email: " + user.getEmail());
 
-        UUID walletId = feignClient.createWallet();
+        Integer walletId = feignClient.createWallet().getId();
         User newUser = new User(
                 walletId,
                 user.getFirstName(),

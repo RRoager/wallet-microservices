@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,8 +15,8 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private UUID walletId;
+    private Integer id;
+    private Integer walletId;
     private String firstName;
     private String lastName;
     @Column(unique=true)
@@ -30,7 +29,7 @@ public class User {
     private String address;
     private String country;
 
-    public User(UUID walletId, String firstName, String lastName, String email, String password, Date dateOfBirth, String phoneNumber, String zipCode, String city, String address, String country) {
+    public User(Integer walletId, String firstName, String lastName, String email, String password, Date dateOfBirth, String phoneNumber, String zipCode, String city, String address, String country) {
         this.walletId = walletId;
         this.firstName = firstName;
         this.lastName = lastName;

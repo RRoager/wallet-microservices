@@ -12,8 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.UUID;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -26,7 +24,7 @@ public class TransactionControllerTests {
     @Test
     public void getTransactionByIdAndWalletIdTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .get("/api/transaction/f753f2cc-1e67-4ad0-b618-ed9450badf0e/1")
+                        .get("/api/transaction/1/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
@@ -36,7 +34,7 @@ public class TransactionControllerTests {
     @Test
     public void getAllTransactionsByWalletIdTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .get("/api/transaction/f753f2cc-1e67-4ad0-b618-ed9450badf0e")
+                        .get("/api/transaction/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").exists())
@@ -46,7 +44,7 @@ public class TransactionControllerTests {
     @Test
     public void getAllByWalletIdFromDateToDateTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .get("/api/transaction/f753f2cc-1e67-4ad0-b618-ed9450badf0e/from/2023-01-03/to/2023-01-04")
+                        .get("/api/transaction/1/from/2023-01-03/to/2023-01-04")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").exists())
@@ -55,10 +53,10 @@ public class TransactionControllerTests {
 
     @Test
     public void createTransactionTest_Success() throws Exception {
-        Transaction testTransaction = new Transaction(UUID.fromString("f753f2cc-1e67-4ad0-b618-ed9450badf0e"), 5000.0, TransactionType.DEPOSIT);
+        Transaction testTransaction = new Transaction(1, 5000.0, TransactionType.DEPOSIT);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/transaction/f753f2cc-1e67-4ad0-b618-ed9450badf0e/create-transaction")
+                        .post("/api/transaction/1/create-transaction")
                         .content(asJsonString(testTransaction))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());

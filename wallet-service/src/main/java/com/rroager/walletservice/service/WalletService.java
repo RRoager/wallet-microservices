@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class WalletService {
     Logger logger = LoggerFactory.getLogger(WalletService.class);
@@ -19,12 +17,12 @@ public class WalletService {
 
     /**
      *
-     * @param id (UUID)
+     * @param id (Integer)
      * @return Wallet
      * Retrieves wallet based on wallet id
      * If no wallet exists with the id, returns null
      */
-    public Wallet getWalletById(UUID id) {
+    public Wallet getWalletById(Integer id) {
         logger.info("(getWalletById) Getting wallet with ID: " + id);
 
         return walletRepository.findById(id).orElse(null);
@@ -33,14 +31,13 @@ public class WalletService {
     /**
      *
      * @return Wallet
-     * Generates UUID wallet id
-     * Creates new wallet with the UUID and saves to db
+     * Creates new wallet and saves to db
      */
     public Wallet createWallet() {
-        UUID id = UUID.randomUUID();
+        Wallet newWallet = walletRepository.save(new Wallet());
 
-        logger.info("(createWallet) Creating wallet with ID: " + id);
+        logger.info("(createWallet) Creating wallet with ID: " + newWallet.getId());
 
-        return walletRepository.save(new Wallet(id));
+        return newWallet;
     }
 }

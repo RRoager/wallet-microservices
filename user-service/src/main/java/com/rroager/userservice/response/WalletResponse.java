@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WalletResponse {
-    private String id;
-    private Long balance;
+    private Integer id;
+    private Double balance;
 }

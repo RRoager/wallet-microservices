@@ -6,23 +6,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
-import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "transactions")
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private UUID walletId;
+    private Integer walletId;
     private Double amount;
     private Date transactionDate;
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
-    public Transaction(UUID walletId, Double amount, TransactionType transactionType) {
+    public Transaction(Integer walletId, Double amount, TransactionType transactionType) {
         this.walletId = walletId;
         this.amount = amount;
         this.transactionDate = new Date(System.currentTimeMillis());
