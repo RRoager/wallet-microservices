@@ -1,7 +1,6 @@
 package com.rroager.walletservice.controller;
 
 import com.rroager.walletservice.entity.Wallet;
-import com.rroager.walletservice.service.TransactionService;
 import com.rroager.walletservice.service.WalletService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +12,9 @@ import java.util.UUID;
 @RequestMapping("/api/wallet")
 public class WalletController {
     private final WalletService walletService;
-    private final TransactionService transactionService;
 
-    public WalletController(WalletService walletService, TransactionService transactionService) {
+    public WalletController(WalletService walletService) {
         this.walletService = walletService;
-        this.transactionService = transactionService;
     }
 
     @GetMapping("/{id}")
@@ -27,10 +24,6 @@ public class WalletController {
 
     @PostMapping("/create-wallet")
     public ResponseEntity<UUID> createWallet() {
-        return new ResponseEntity<>(walletService.createWallet().getId(), HttpStatus.OK);
+        return new ResponseEntity<>(walletService.createWallet().getId(), HttpStatus.CREATED);
     }
-
-    // TODO create ("/transaction/{id}") getTransaction(Long transactionID) GET request
-    // TODO create ("/transaction-history/{fromDate}/to/{toDate}") getTransactionHistory(Date from, Date to) GET request
-    // TODO create ("/transaction/{transactionType}/amount/{amount}") makeTransaction(TransactionType transactionType, Double amount) POST request
 }
