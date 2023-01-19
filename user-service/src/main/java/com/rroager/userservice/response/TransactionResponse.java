@@ -13,12 +13,8 @@ import java.sql.Date;
 @AllArgsConstructor
 public class TransactionResponse {
     public enum TransactionType { DEPOSIT, WITHDRAW }
-
     private Long id;
-
     private Long amount;
-
     private Date transactionDate;
-
     private TransactionType transactionType;
 }
