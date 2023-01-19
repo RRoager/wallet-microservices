@@ -35,7 +35,7 @@ public class UserController {
         if (userService.passwordIsValid(user.getPassword())) {
             User newUser = userService.createUser(user);
 
-            return new ResponseEntity<>("User created successfully with ID: " + newUser.getId(), HttpStatus.OK);
+            return new ResponseEntity<>("User created successfully with ID: " + newUser.getId(), HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("Invalid password. Password must be at least 6 characters long and include one uppercase, one lowercase, one special character and one numeric value", HttpStatus.BAD_REQUEST);
         }

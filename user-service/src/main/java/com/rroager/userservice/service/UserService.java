@@ -56,7 +56,7 @@ public class UserService {
      * @return User
      * Checks if email is already in db
      * Call WalletService to create new wallet and retrieves new walletId
-     * Creates new user object with the walletId and details given
+     * Creates new user object with the newly created walletId and details given
      * Saves new user to db
      */
     public User createUser(User user) {
