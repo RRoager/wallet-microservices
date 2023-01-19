@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+public class UserControllerTests {
 
     @Autowired
     private MockMvc mvc;
@@ -51,7 +51,7 @@ public class UserControllerTest {
                 .post("/api/user/create-user")
                 .content(asJsonString(testUser))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
