@@ -52,7 +52,7 @@ public class WalletControllerTests {
                 .andExpect(content().string("Updated balance of wallet with ID: 1"));
     }
 
-    // Used to send objects as JSON strings
+    // Converts object to JSON string
     public static String asJsonString(final Object obj) {
         try {
             final ObjectMapper mapper = new ObjectMapper();

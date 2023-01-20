@@ -78,7 +78,7 @@ public class TransactionControllerTests {
     }
 
 
-    // Used to send objects as JSON strings
+    // Converts object to JSON string
     public static String asJsonString(final Object obj) {
         try {
             final ObjectMapper mapper = new ObjectMapper();
