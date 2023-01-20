@@ -36,4 +36,7 @@ public class WalletController {
 
         return new ResponseEntity<>("Updated balance of wallet with ID: " + wallet.getId(), HttpStatus.OK);
     }
+
+    // TODO Add delete-wallet mapping
+    // TODO Maybe return object instead of String
 }

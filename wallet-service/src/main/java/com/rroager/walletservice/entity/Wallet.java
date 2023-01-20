@@ -14,5 +14,7 @@ public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    // TODO add userId; everywhere
     private Double balance;
 }

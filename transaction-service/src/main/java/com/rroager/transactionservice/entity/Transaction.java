@@ -18,6 +18,8 @@ public class Transaction {
     private Integer id;
     private Integer walletId;
     private Double amount;
+
+    // TODO maybe add a current balance variable
     private Date transactionDate;
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
