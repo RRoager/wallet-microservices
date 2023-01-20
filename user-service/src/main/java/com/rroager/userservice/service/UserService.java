@@ -53,7 +53,6 @@ public class UserService {
      *
      * @param user (User)
      * @return User
-     * Checks if email is already in db
      * Call WalletService to create new wallet and retrieves new walletId
      * Creates new user object with the newly created walletId and details given
      * Saves new user to db
@@ -77,6 +76,40 @@ public class UserService {
         userRepository.save(newUser);
 
         return newUser;
+    }
+
+    /**
+     *
+     * @param updatedUser (User)
+     * @return User
+     * Retrieves user based on user ID
+     * Updates user with the details given
+     * Saves user to db
+     * If user is null, not user exists with the ID and null is returned
+     */
+    public User updateUser(Integer id, User updatedUser) {
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user != null) {
+            user.setFirstName(updatedUser.getFirstName());
+            user.setLastName(updatedUser.getLastName());
+            user.setEmail(updatedUser.getEmail());
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            user.setDateOfBirth(updatedUser.getDateOfBirth());
+            user.setPhoneNumber(updatedUser.getPhoneNumber());
+            user.setZipCode(updatedUser.getZipCode());
+            user.setCity(updatedUser.getCity());
+            user.setAddress(updatedUser.getAddress());
+            user.setCountry(updatedUser.getCountry());
+
+            logger.info("(updateUser) Updating user with ID: " + user.getId());
+
+            userRepository.save(user);
+
+            return user;
+        }
+
+        return null;
     }
 
     /**
@@ -106,5 +139,26 @@ public class UserService {
                 "(?=.*?[`~!@#$%^&*()\\-_=+\\\\|\\[{\\]};:'\",<.>/?]).*$";
 
         return Pattern.compile(regex).matcher(password).matches();
+    }
+
+    /**
+     *
+     * @param id (Integer)
+     * @return boolean
+     * Retrieves user based on user ID
+     * Deletes user from db
+     * If user is null, not user exists with the ID and null is returned
+     */
+    public boolean deleteUser(Integer id) {
+        User user = userRepository.findById(id).orElse(null);
+
+        // TODO maybe also delete users wallet
+
+        if (user == null) {
+            return false;
+        } else {
+            userRepository.delete(getUserById(id));
+            return true;
+        }
     }
 }

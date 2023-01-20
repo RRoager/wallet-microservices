@@ -27,17 +27,44 @@ public class UserController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
-        if(userService.userWithEmailExists(user.getEmail())) {
+    public ResponseEntity<?> createUser(@RequestBody User updatedUser) {
+        if(userService.userWithEmailExists(updatedUser.getEmail())) {
             return new ResponseEntity<>("Email is already taken. Please choose another email.", HttpStatus.BAD_REQUEST);
         }
 
-        if (userService.passwordIsValid(user.getPassword())) {
-            return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+        if (userService.passwordIsValid(updatedUser.getPassword())) {
+            return new ResponseEntity<>(userService.createUser(updatedUser), HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("Invalid password. Password must be at least 6 characters long and include one uppercase, one lowercase, one special character and one numeric value.", HttpStatus.BAD_REQUEST);
         }
     }
 
-    // TODO make it possible to update users password and delete user
+    @PutMapping("/{id}/update-user")
+    public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody User user) {
+        if(userService.userWithEmailExists(user.getEmail())) {
+            return new ResponseEntity<>("Email is already taken. Please choose another email.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (userService.passwordIsValid(user.getPassword())) {
+            User updatedUser = userService.updateUser(id, user);
+            if (updatedUser != null) {
+                return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("No user with the ID: " + id, HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("Invalid password. Password must be at least 6 characters long and include one uppercase, one lowercase, one special character and one numeric value.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{id}/delete-user")
+    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
+        if (userService.deleteUser(id)) {
+            return new ResponseEntity<>("Deleted user with ID: " + id, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("No user with the ID: " + id, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // TODO Test update user and delete user
 }
