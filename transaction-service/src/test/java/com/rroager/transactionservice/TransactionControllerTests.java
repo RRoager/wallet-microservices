@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -59,7 +60,21 @@ public class TransactionControllerTests {
                         .post("/api/transaction/1/create-transaction")
                         .content(asJsonString(testTransaction))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(10));
+    }
+
+    @Test
+    public void createTransactionTest_InvalidAmount() throws Exception {
+        Transaction testTransaction = new Transaction(1, 0.0, TransactionType.DEPOSIT);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/transaction/1/create-transaction")
+                        .content(asJsonString(testTransaction))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Transaction amount must be more than 0."));
     }
 
 

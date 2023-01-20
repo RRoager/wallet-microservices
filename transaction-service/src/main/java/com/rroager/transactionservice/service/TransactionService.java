@@ -1,6 +1,7 @@
 package com.rroager.transactionservice.service;
 
 import com.rroager.transactionservice.entity.Transaction;
+import com.rroager.transactionservice.feign.FeignClient;
 import com.rroager.transactionservice.repository.TransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,11 @@ public class TransactionService {
 
     Logger logger = LoggerFactory.getLogger(TransactionService.class);
     private final TransactionRepository transactionRepository;
+    private final FeignClient feignClient;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(TransactionRepository transactionRepository, FeignClient feignClient) {
         this.transactionRepository = transactionRepository;
+        this.feignClient = feignClient;
     }
 
     /**
@@ -63,10 +66,13 @@ public class TransactionService {
      * @param walletId (Integer)
      * @param transaction (Transaction)
      * @return Transaction
-     * Creates new transaction for a specific walletId with details given
+     * Sends transaction to WalletService for wallet balance to be updated
+     * Creates new transaction for a specific walletId with details given and saves to db
      */
     public Transaction createTransaction(Integer walletId, Transaction transaction) {
         logger.info("(createTransaction) Creating transaction for wallet with ID: " + walletId);
+
+        feignClient.updateWalletBalance(transaction);
 
         return transactionRepository.save(new Transaction(transaction.getWalletId(), transaction.getAmount(), transaction.getTransactionType()));
     }

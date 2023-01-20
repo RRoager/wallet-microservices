@@ -35,9 +35,11 @@ public class TransactionController {
     }
 
     @PostMapping("/{walletId}/create-transaction")
-    public ResponseEntity<Transaction> createTransaction(@PathVariable Integer walletId, @RequestBody Transaction transaction) {
+    public ResponseEntity<?> createTransaction(@PathVariable Integer walletId, @RequestBody Transaction transaction) {
+        if (transaction.getAmount() <= 0) {
+            return new ResponseEntity<>("Transaction amount must be more than 0.", HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(transactionService.createTransaction(walletId, transaction), HttpStatus.CREATED);
     }
-
-    // TODO DEPOSIT or WITHDRAW from wallet
 }
