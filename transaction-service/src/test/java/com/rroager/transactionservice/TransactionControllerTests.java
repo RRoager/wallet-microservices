@@ -77,6 +77,18 @@ public class TransactionControllerTests {
                 .andExpect(content().string("Transaction amount must be more than 0."));
     }
 
+    @Test
+    public void createTransactionTest_InsufficientFunds() throws Exception {
+        Transaction testTransaction = new Transaction(1, 1000000.0, TransactionType.WITHDRAW);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/transaction/1/create-transaction")
+                        .content(asJsonString(testTransaction))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Insufficient funds in wallet."));
+    }
+
     // Converts object to JSON string
     public static String asJsonString(final Object obj) {
         try {

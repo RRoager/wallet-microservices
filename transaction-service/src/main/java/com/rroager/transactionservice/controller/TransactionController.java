@@ -43,7 +43,7 @@ public class TransactionController {
         try {
             return new ResponseEntity<>(transactionService.createTransaction(walletId, transaction), HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("Insufficient funds in wallet", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Insufficient funds in wallet.", HttpStatus.BAD_REQUEST);
         }
     }
 }

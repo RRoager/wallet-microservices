@@ -52,6 +52,18 @@ public class WalletControllerTests {
                 .andExpect(content().string("Updated balance of wallet with ID: 1"));
     }
 
+    @Test
+    public void updateWalletBalanceTest_InsufficientFunds() throws Exception {
+        TransactionRequest testTransactionRequest = new TransactionRequest(1, 1000000.0, TransactionRequest.TransactionType.WITHDRAW);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/api/wallet/update-wallet")
+                        .content(asJsonString(testTransactionRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Insufficient funds in wallet."));
+    }
+
     // Converts object to JSON string
     public static String asJsonString(final Object obj) {
         try {

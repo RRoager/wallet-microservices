@@ -31,7 +31,7 @@ public class WalletController {
         Wallet wallet = walletService.updateWalletBalance(transactionRequest);
 
         if (wallet == null) {
-            return new ResponseEntity<>("Insufficient funds in wallet", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Insufficient funds in wallet.", HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>("Updated balance of wallet with ID: " + wallet.getId(), HttpStatus.OK);
