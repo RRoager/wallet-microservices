@@ -27,7 +27,7 @@ GET http://localhost:9090/user-service/api/user/{id}/wallet
 
 Create User\
 POST http://localhost:9090/user-service/api/user/create-user
-\
+
 ### **Wallet Service:**
 Get Wallet by Wallet ID\
 GET http://localhost:9090/wallet-service/api/wallet/{id}
@@ -37,7 +37,7 @@ POST http://localhost:9090/wallet-service/api/wallet/create-wallet
 
 Update Wallet Balance\
 PUT http://localhost:9090/wallet-service/api/wallet/update-wallet
-\
+
 ### **Transaction Service:**
 Get Transaction by Transaction ID and Wallet ID\
 GET http://localhost:9090/transaction-service/api/transaction/{walletId}/{id}
