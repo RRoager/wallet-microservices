@@ -38,4 +38,6 @@ public class UserController {
             return new ResponseEntity<>("Invalid password. Password must be at least 6 characters long and include one uppercase, one lowercase, one special character and one numeric value", HttpStatus.BAD_REQUEST);
         }
     }
+
+    // TODO make it possible to change password
 }
