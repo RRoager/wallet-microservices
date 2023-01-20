@@ -48,22 +48,24 @@ public class WalletService {
      * @return Wallet
      * Retrieves wallet with id matching the id from transactionRequest
      * Added transactionRequest amount to balance if DEPOSIT
-     * Subtracts transactionRequest amount from balance if WITHDRAW
+     * Subtracts transactionRequest amount from balance if WITHDRAW and enough balance in wallet
      * Saves wallet with new balance
      */
     public Wallet updateWalletBalance(TransactionRequest transactionRequest) {
         Wallet wallet = getWalletById(transactionRequest.getWalletId());
 
         if (transactionRequest.getTransactionType().equals(TransactionRequest.TransactionType.DEPOSIT)) {
-            Double balance = wallet.getBalance() + transactionRequest.getAmount();
-            wallet.setBalance(balance);
+            wallet.setBalance(wallet.getBalance() + transactionRequest.getAmount());
 
             logger.info("(updateWalletBalance) Adding transaction amount to balance wallet with ID: " + wallet.getId());
 
             return walletRepository.save(wallet);
         } else if (transactionRequest.getTransactionType().equals(TransactionRequest.TransactionType.WITHDRAW)) {
-            Double balance = wallet.getBalance() - transactionRequest.getAmount();
-            wallet.setBalance(balance);
+            if (wallet.getBalance() < transactionRequest.getAmount()) {
+                return null;
+            }
+
+            wallet.setBalance(wallet.getBalance() - transactionRequest.getAmount());
 
             logger.info("(updateWalletBalance) Subtracting transaction amount from balance wallet with ID: " + wallet.getId());
 

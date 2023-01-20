@@ -5,6 +5,7 @@ import com.rroager.transactionservice.feign.FeignClient;
 import com.rroager.transactionservice.repository.TransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -70,9 +71,11 @@ public class TransactionService {
      * Creates new transaction for a specific walletId with details given and saves to db
      */
     public Transaction createTransaction(Integer walletId, Transaction transaction) {
-        logger.info("(createTransaction) Creating transaction for wallet with ID: " + walletId);
+        if (feignClient.updateWalletBalance(transaction).getStatusCode() == HttpStatus.BAD_REQUEST) {
+            return null;
+        }
 
-        feignClient.updateWalletBalance(transaction);
+        logger.info("(createTransaction) Creating transaction for wallet with ID: " + walletId);
 
         return transactionRepository.save(new Transaction(transaction.getWalletId(), transaction.getAmount(), transaction.getTransactionType()));
     }
