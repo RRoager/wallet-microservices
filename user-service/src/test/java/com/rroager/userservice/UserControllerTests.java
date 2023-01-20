@@ -25,8 +25,8 @@ public class UserControllerTests {
     @Test
     public void getUserByIdTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get("/api/user/1")
-                .accept(MediaType.APPLICATION_JSON))
+                        .get("/api/user/1")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Rasmus"));
@@ -35,8 +35,8 @@ public class UserControllerTests {
     @Test
     public void getWalletForUserTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get("/api/user/1/wallet")
-                .accept(MediaType.APPLICATION_JSON))
+                        .get("/api/user/1/wallet")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("f753f2cc-1e67-4ad0-b618-ed9450badf0e"));
@@ -47,9 +47,9 @@ public class UserControllerTests {
         User testUser = new User(123, "Test", "Testesen", "test@test.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
         mvc.perform(MockMvcRequestBuilders
-                .post("/api/user/create-user")
-                .content(asJsonString(testUser))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .post("/api/user/create-user")
+                        .content(asJsonString(testUser))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
 
