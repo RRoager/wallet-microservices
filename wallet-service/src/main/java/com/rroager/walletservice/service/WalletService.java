@@ -2,6 +2,7 @@ package com.rroager.walletservice.service;
 
 import com.rroager.walletservice.entity.Wallet;
 import com.rroager.walletservice.repository.WalletRepository;
+import com.rroager.walletservice.request.TransactionRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,5 +40,36 @@ public class WalletService {
         logger.info("(createWallet) Creating wallet with ID: " + newWallet.getId());
 
         return newWallet;
+    }
+
+    /**
+     *
+     * @param transactionRequest (TransactionRequest)
+     * @return Wallet
+     * Retrieves wallet with id matching the id from transactionRequest
+     * Added transactionRequest amount to balance if DEPOSIT
+     * Subtracts transactionRequest amount from balance if WITHDRAW
+     * Saves wallet with new balance
+     */
+    public Wallet updateWalletBalance(TransactionRequest transactionRequest) {
+        Wallet wallet = getWalletById(transactionRequest.getWalletId());
+
+        if (transactionRequest.getTransactionType().equals(TransactionRequest.TransactionType.DEPOSIT)) {
+            Double balance = wallet.getBalance() + transactionRequest.getAmount();
+            wallet.setBalance(balance);
+
+            logger.info("(updateWalletBalance) Adding transaction amount to balance wallet with ID: " + wallet.getId());
+
+            return walletRepository.save(wallet);
+        } else if (transactionRequest.getTransactionType().equals(TransactionRequest.TransactionType.WITHDRAW)) {
+            Double balance = wallet.getBalance() - transactionRequest.getAmount();
+            wallet.setBalance(balance);
+
+            logger.info("(updateWalletBalance) Subtracting transaction amount from balance wallet with ID: " + wallet.getId());
+
+            return walletRepository.save(wallet);
+        }
+
+        return null;
     }
 }
