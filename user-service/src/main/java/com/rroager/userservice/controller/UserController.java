@@ -39,5 +39,5 @@ public class UserController {
         }
     }
 
-    // TODO make it possible to change password
+    // TODO make it possible to update users password and delete user
 }
