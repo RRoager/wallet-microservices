@@ -77,7 +77,6 @@ public class TransactionControllerTests {
                 .andExpect(content().string("Transaction amount must be more than 0."));
     }
 
-
     // Converts object to JSON string
     public static String asJsonString(final Object obj) {
         try {

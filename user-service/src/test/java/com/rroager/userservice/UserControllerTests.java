@@ -75,7 +75,6 @@ public class UserControllerTests {
                 .andExpect(status().is4xxClientError());
     }
 
-
     // Converts object to JSON string
     public static String asJsonString(final Object obj) {
         try {
