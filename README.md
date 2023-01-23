@@ -7,13 +7,13 @@ Eureka Naming Server for the microservices
 API Gateway
 
 ### user-service
-User microservice that handles User creation, update and deletion.
+User microservice that handles User reading, creation, update and deletion.
 
 ### wallet-service:
-Wallet mircoservice that handles Wallet creation, balance updating and deletion.
+Wallet mircoservice that handles Wallet reading, creation, balance updating and deletion.
 
 ### transaction-service:
-Transaction microservice that handles Transaction creation and Transaction history.
+Transaction microservice that handles Transaction reading, creation and Transaction history.
 
 
 ## Endpoints
