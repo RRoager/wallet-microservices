@@ -34,8 +34,8 @@ public class WalletService {
      * @return Wallet
      * Creates new wallet and saves to db
      */
-    public Wallet createWallet() {
-        Wallet newWallet = walletRepository.save(new Wallet());
+    public Wallet createWallet(Integer userId) {
+        Wallet newWallet = walletRepository.save(new Wallet(userId));
 
         logger.info("(createWallet) Creating wallet with ID: " + newWallet.getId());
 
@@ -73,5 +73,24 @@ public class WalletService {
         }
 
         return null;
+    }
+
+    /**
+     *
+     * @param id (Integer)
+     * @return boolean
+     * Retrieves wallet based on user ID
+     * Deletes wallet from db
+     * If wallet is null, no wallet exists with the ID and null is returned
+     */
+    public boolean deleteWallet(Integer id) {
+        Wallet wallet = walletRepository.findById(id).orElse(null);
+
+        if (wallet == null) {
+            return false;
+        } else {
+            walletRepository.delete(getWalletById(id));
+            return true;
+        }
     }
 }

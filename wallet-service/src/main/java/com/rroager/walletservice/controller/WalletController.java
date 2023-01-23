@@ -21,22 +21,28 @@ public class WalletController {
         return new ResponseEntity<>(walletService.getWalletById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/create-wallet")
-    public ResponseEntity<Wallet> createWallet() {
-        return new ResponseEntity<>(walletService.createWallet(), HttpStatus.CREATED);
+    @PostMapping("/user/{userId}/create-wallet")
+    public ResponseEntity<Wallet> createWallet(@PathVariable Integer userId) {
+        return new ResponseEntity<>(walletService.createWallet(userId), HttpStatus.CREATED);
     }
 
     @PutMapping("/update-wallet")
-    public ResponseEntity<String> updateWalletBalance(@RequestBody TransactionRequest transactionRequest) {
+    public ResponseEntity<?> updateWalletBalance(@RequestBody TransactionRequest transactionRequest) {
         Wallet wallet = walletService.updateWalletBalance(transactionRequest);
 
         if (wallet == null) {
             return new ResponseEntity<>("Insufficient funds in wallet.", HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>("Updated balance of wallet with ID: " + wallet.getId(), HttpStatus.OK);
+        return new ResponseEntity<>(wallet, HttpStatus.OK);
     }
 
-    // TODO Add delete-wallet mapping
-    // TODO Maybe return object instead of String
+    @DeleteMapping("/{id}/delete-wallet")
+    public ResponseEntity<String> deleteWallet(@PathVariable Integer id) {
+        if (walletService.deleteWallet(id)) {
+            return new ResponseEntity<>("Deleted wallet with ID: " + id, HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>("Not able to delete wallet. No wallet with ID: " + id, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

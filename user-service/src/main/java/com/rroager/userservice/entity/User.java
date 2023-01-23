@@ -29,8 +29,7 @@ public class User {
     private String address;
     private String country;
 
-    public User(Integer walletId, String firstName, String lastName, String email, String password, Date dateOfBirth, String phoneNumber, String zipCode, String city, String address, String country) {
-        this.walletId = walletId;
+    public User(String firstName, String lastName, String email, String password, Date dateOfBirth, String phoneNumber, String zipCode, String city, String address, String country) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

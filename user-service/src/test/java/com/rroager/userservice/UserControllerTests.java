@@ -2,7 +2,10 @@ package com.rroager.userservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rroager.userservice.entity.User;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,16 +16,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.sql.Date;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserControllerTests {
 
     @Autowired
     private MockMvc mvc;
 
     @Test
+    @Order(1)
     public void getUserByIdTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/1")
@@ -33,18 +39,20 @@ public class UserControllerTests {
     }
 
     @Test
+    @Order(2)
     public void getWalletForUserTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/1/wallet")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("f753f2cc-1e67-4ad0-b618-ed9450badf0e"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"));
     }
 
     @Test
+    @Order(3)
     public void createUserTest_Success() throws Exception {
-        User testUser = new User(123, "Test", "Testesen", "test@test.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+        User testUser = new User("Test", "Testesen", "test@test.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/create-user")
@@ -54,8 +62,9 @@ public class UserControllerTests {
     }
 
     @Test
+    @Order(4)
     public void createUserTest_EmailExists() throws Exception {
-        User testUser = new User(123, "Test", "Testesen", "rasmus-roager@hotmail.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+        User testUser = new User("Test", "Testesen", "rasmus-roager@hotmail.com", "Test2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/create-user")
@@ -65,8 +74,9 @@ public class UserControllerTests {
     }
 
     @Test
+    @Order(5)
     public void createUserTest_InvalidPassword() throws Exception {
-        User testUser = new User(123, "Test", "Testesen", "test@test.com", "test", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+        User testUser = new User("Test", "Testesen", "test@test.com", "test", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/create-user")
@@ -74,6 +84,62 @@ public class UserControllerTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
     }
+
+    @Test
+    @Order(6)
+    public void updateUserTest_Success() throws Exception {
+        User testUser = new User("updatedTest", "updatedTestesen", "updatedTest@test.com", "UpdatedTest2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/api/user/1/update-user")
+                        .content(asJsonString(testUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(7)
+    public void updateUserTest_EmailExists() throws Exception {
+        User testUser = new User("updatedTest", "updatedTestesen", "bjarne@hotmail.com", "UpdatedTest2023!", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/1/update-user")
+                        .content(asJsonString(testUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @Order(8)
+    public void updateUserTest_InvalidPassword() throws Exception {
+        User testUser = new User("updatedTest", "updatedTestesen", "updatedTest@test.com", "UpdatedTest", Date.valueOf("1957-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/1/update-user")
+                        .content(asJsonString(testUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @Order(9)
+    public void deleteUserTest_Success() throws Exception {
+            mvc.perform(MockMvcRequestBuilders
+                            .delete("/api/user/1/delete-user")
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @Order(10)
+    public void deleteUserTest_Fail() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                        .delete("/api/user/99/delete-user")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Not able to delete user. No user with ID: 99"));
+    }
+
 
     // Converts object to JSON string
     public static String asJsonString(final Object obj) {

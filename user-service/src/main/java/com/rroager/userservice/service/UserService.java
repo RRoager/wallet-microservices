@@ -53,16 +53,15 @@ public class UserService {
      *
      * @param user (User)
      * @return User
-     * Call WalletService to create new wallet and retrieves new walletId
      * Creates new user object with the newly created walletId and details given
      * Saves new user to db
+     * Call WalletService to create new wallet and retrieves new walletId
+     * Sets new walletId on new user and saves
      */
     public User createUser(User user) {
         logger.info("(createUser) Creating user with email: " + user.getEmail());
 
-        Integer walletId = feignClient.createWallet().getId();
         User newUser = new User(
-                walletId,
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
@@ -75,7 +74,9 @@ public class UserService {
                 user.getCountry());
         userRepository.save(newUser);
 
-        return newUser;
+        newUser.setWalletId(feignClient.createWallet(newUser.getId()).getId());
+
+        return userRepository.save(newUser);
     }
 
     /**
@@ -85,7 +86,7 @@ public class UserService {
      * Retrieves user based on user ID
      * Updates user with the details given
      * Saves user to db
-     * If user is null, not user exists with the ID and null is returned
+     * If user is null, no user exists with the ID and null is returned
      */
     public User updateUser(Integer id, User updatedUser) {
         User user = userRepository.findById(id).orElse(null);
@@ -146,17 +147,16 @@ public class UserService {
      * @param id (Integer)
      * @return boolean
      * Retrieves user based on user ID
-     * Deletes user from db
-     * If user is null, not user exists with the ID and null is returned
+     * Deletes users wallet and user from db
+     * If user is null, no user exists with the ID and null is returned
      */
     public boolean deleteUser(Integer id) {
         User user = userRepository.findById(id).orElse(null);
 
-        // TODO maybe also delete users wallet
-
         if (user == null) {
             return false;
         } else {
+            feignClient.deleteWallet(user.getWalletId());
             userRepository.delete(getUserById(id));
             return true;
         }

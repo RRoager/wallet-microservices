@@ -1,4 +1,4 @@
-package com.rroager.userservice.response;
+package com.rroager.transactionservice.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class WalletResponse {
     private Integer id;
-    private Integer userId;
     private Double balance;
 }

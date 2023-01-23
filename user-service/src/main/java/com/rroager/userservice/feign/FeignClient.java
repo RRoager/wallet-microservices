@@ -1,6 +1,7 @@
 package com.rroager.userservice.feign;
 
 import com.rroager.userservice.response.WalletResponse;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,9 @@ public interface FeignClient {
     @GetMapping("wallet-service/api/wallet/{id}")
     WalletResponse getWalletById(@PathVariable Integer id);
 
-    @PostMapping("wallet-service/api/wallet/create-wallet")
-    WalletResponse createWallet();
+    @PostMapping("wallet-service/api/wallet/user/{userId}/create-wallet")
+    WalletResponse createWallet(@PathVariable Integer userId);
+
+    @DeleteMapping("wallet-service/api/wallet/{id}/delete-wallet")
+    String deleteWallet(@PathVariable Integer id);
 }
