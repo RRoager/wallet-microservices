@@ -1,7 +1,7 @@
 package com.rroager.transactionservice.feign;
 
 import com.rroager.transactionservice.entity.Transaction;
-import org.springframework.http.ResponseEntity;
+import com.rroager.transactionservice.response.WalletResponse;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface FeignClient {
 
     @PutMapping("wallet-service/api/wallet/update-wallet")
-    ResponseEntity<String> updateWalletBalance(@RequestBody Transaction transaction);
+    WalletResponse updateWalletBalance(@RequestBody Transaction transaction);
 }

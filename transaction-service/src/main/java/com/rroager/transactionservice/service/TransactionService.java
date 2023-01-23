@@ -3,9 +3,9 @@ package com.rroager.transactionservice.service;
 import com.rroager.transactionservice.entity.Transaction;
 import com.rroager.transactionservice.feign.FeignClient;
 import com.rroager.transactionservice.repository.TransactionRepository;
+import com.rroager.transactionservice.response.WalletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -68,16 +68,18 @@ public class TransactionService {
      * @param transaction (Transaction)
      * @return Transaction
      * Sends transaction to WalletService for wallet balance to be updated
-     * If wallet has insufficient funds 400 is received and null is returned
+     * If wallet has insufficient funds null is received
      * Creates new transaction for a specific walletId with details given and saves to db
      */
     public Transaction createTransaction(Integer walletId, Transaction transaction) {
-        if (feignClient.updateWalletBalance(transaction).getStatusCode() == HttpStatus.BAD_REQUEST) {
+        WalletResponse walletResponse = feignClient.updateWalletBalance(transaction);
+
+        if (walletResponse == null) {
             return null;
         }
 
         logger.info("(createTransaction) Creating transaction for wallet with ID: " + walletId);
 
-        return transactionRepository.save(new Transaction(transaction.getWalletId(), transaction.getAmount(), transaction.getTransactionType()));
+        return transactionRepository.save(new Transaction(transaction.getWalletId(), transaction.getAmount(), walletResponse.getBalance(), transaction.getTransactionType()));
     }
 }

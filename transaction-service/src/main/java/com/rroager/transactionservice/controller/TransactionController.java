@@ -19,22 +19,22 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @GetMapping("/{walletId}/{id}")
+    @GetMapping("/wallet/{walletId}/{id}")
     public ResponseEntity<Transaction> getTransactionByIdAndWalletId(@PathVariable Integer walletId, @PathVariable Integer id) {
         return new ResponseEntity<>(transactionService.getTransactionByIdAndWalletId(id, walletId), HttpStatus.OK);
     }
 
-    @GetMapping("/{walletId}")
+    @GetMapping("/wallet/{walletId}")
     public ResponseEntity<List<Transaction>> getAllTransactionsByWalletId(@PathVariable Integer walletId) {
         return new ResponseEntity<>(transactionService.getAllTransactionsWalletId(walletId), HttpStatus.OK);
     }
 
-    @GetMapping("/{walletId}/from/{fromDate}/to/{toDate}")
+    @GetMapping("/wallet/{walletId}/from/{fromDate}/to/{toDate}")
     public ResponseEntity<List<Transaction>> getAllByWalletIdFromDateToDate(@PathVariable Integer walletId, @PathVariable Date fromDate, @PathVariable Date toDate) {
         return new ResponseEntity<>(transactionService.getAllByWalletIdFromDateToDate(walletId, fromDate, toDate), HttpStatus.OK);
     }
 
-    @PostMapping("/{walletId}/create-transaction")
+    @PostMapping("/wallet/{walletId}/create-transaction")
     public ResponseEntity<?> createTransaction(@PathVariable Integer walletId, @RequestBody Transaction transaction) {
         if (transaction.getAmount() <= 0) {
             return new ResponseEntity<>("Transaction amount must be more than 0.", HttpStatus.BAD_REQUEST);

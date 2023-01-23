@@ -20,12 +20,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TransactionControllerTests {
 
     @Autowired
-    private  MockMvc mvc;
+    private MockMvc mvc;
 
     @Test
     public void getTransactionByIdAndWalletIdTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .get("/api/transaction/1/1")
+                        .get("/api/transaction/wallet/1/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
@@ -35,7 +35,7 @@ public class TransactionControllerTests {
     @Test
     public void getAllTransactionsByWalletIdTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .get("/api/transaction/1")
+                        .get("/api/transaction/wallet/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").exists())
@@ -45,32 +45,33 @@ public class TransactionControllerTests {
     @Test
     public void getAllByWalletIdFromDateToDateTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .get("/api/transaction/1/from/2023-01-03/to/2023-01-04")
+                        .get("/api/transaction/wallet/1/from/2023-01-03/to/2023-01-04")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(2));
     }
 
+    // TODO find a way to delete data from WalletService database after tests
     @Test
     public void createTransactionTest_Success() throws Exception {
-        Transaction testTransaction = new Transaction(1, 5000.0, TransactionType.DEPOSIT);
+        Transaction testTransaction = new Transaction(1, 5000.0, 5000.0, TransactionType.DEPOSIT);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/transaction/1/create-transaction")
+                        .post("/api/transaction/wallet/1/create-transaction")
                         .content(asJsonString(testTransaction))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(10));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currentBalance").value(10000.0));
     }
 
     @Test
     public void createTransactionTest_InvalidAmount() throws Exception {
-        Transaction testTransaction = new Transaction(1, 0.0, TransactionType.DEPOSIT);
+        Transaction testTransaction = new Transaction(1, 0.0, 5000.0, TransactionType.DEPOSIT);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/transaction/1/create-transaction")
+                        .post("/api/transaction/wallet/1/create-transaction")
                         .content(asJsonString(testTransaction))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -79,10 +80,10 @@ public class TransactionControllerTests {
 
     @Test
     public void createTransactionTest_InsufficientFunds() throws Exception {
-        Transaction testTransaction = new Transaction(1, 1000000.0, TransactionType.WITHDRAW);
+        Transaction testTransaction = new Transaction(1, 1000000.0, 5000.0, TransactionType.WITHDRAW);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/api/transaction/1/create-transaction")
+                        .post("/api/transaction/wallet/1/create-transaction")
                         .content(asJsonString(testTransaction))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())

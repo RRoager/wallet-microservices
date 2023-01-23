@@ -18,15 +18,15 @@ public class Transaction {
     private Integer id;
     private Integer walletId;
     private Double amount;
-
-    // TODO maybe add a current balance variable
+    private Double currentBalance;
     private Date transactionDate;
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
-    public Transaction(Integer walletId, Double amount, TransactionType transactionType) {
+    public Transaction(Integer walletId, Double amount, Double currentBalance, TransactionType transactionType) {
         this.walletId = walletId;
         this.amount = amount;
+        this.currentBalance = currentBalance;
         this.transactionDate = new Date(System.currentTimeMillis());
         this.transactionType = transactionType;
     }
