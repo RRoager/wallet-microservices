@@ -75,4 +75,5 @@ public class UserController {
             return new ResponseEntity<>("Not able to delete user. No user with ID: " + id, HttpStatus.BAD_REQUEST);
         }
     }
+
 }
