@@ -37,7 +37,7 @@ public class TransactionControllerTests {
 
     @Test
     public void getTransactionByIdAndWalletIdTest() throws Exception {
-        Transaction testTransaction = new Transaction(1, 1, 1500.0, 5500.00, Date.valueOf("2023-01-01"), DEPOSIT);
+        Transaction testTransaction = new Transaction(1, 1, 1500.0, 5500.0, Date.valueOf("2023-01-01"), DEPOSIT);
 
         when(transactionService.getTransactionByIdAndWalletId(1, 1)).thenReturn(testTransaction);
 
@@ -55,8 +55,8 @@ public class TransactionControllerTests {
 
     @Test
     public void getAllTransactionsByWalletIdTest() throws Exception {
-        Transaction testTransaction1 = new Transaction(1, 1, 1500.0, 5500.00, Date.valueOf("2023-01-01"), DEPOSIT);
-        Transaction testTransaction2 = new Transaction(1, 1, 2500.0, 3000.00, Date.valueOf("2023-01-03"), WITHDRAW);
+        Transaction testTransaction1 = new Transaction(1, 1, 1500.0, 5500.0, Date.valueOf("2023-01-01"), DEPOSIT);
+        Transaction testTransaction2 = new Transaction(1, 1, 2500.0, 3000.0, Date.valueOf("2023-01-03"), WITHDRAW);
         List<Transaction> testTransactionList = Arrays.asList(testTransaction1, testTransaction2);
 
         when(transactionService.getAllTransactionsWalletId(1)).thenReturn(testTransactionList);
@@ -81,8 +81,8 @@ public class TransactionControllerTests {
 
     @Test
     public void getAllByWalletIdFromDateToDateTest() throws Exception {
-        Transaction testTransaction1 = new Transaction(1, 1, 1500.0, 5500.00, Date.valueOf("2023-01-01"), DEPOSIT);
-        Transaction testTransaction2 = new Transaction(1, 1, 2500.0, 3000.00, Date.valueOf("2023-01-03"), WITHDRAW);
+        Transaction testTransaction1 = new Transaction(1, 1, 1500.0, 5500.0, Date.valueOf("2023-01-01"), DEPOSIT);
+        Transaction testTransaction2 = new Transaction(1, 1, 2500.0, 3000.0, Date.valueOf("2023-01-03"), WITHDRAW);
         List<Transaction> testTransactionList = Arrays.asList(testTransaction1, testTransaction2);
 
         when(transactionService.getAllByWalletIdFromDateToDate(1, Date.valueOf("2023-01-01"), Date.valueOf("2023-01-03"))).thenReturn(testTransactionList);
