@@ -40,7 +40,7 @@ public class WalletController {
     @DeleteMapping("/{id}/delete-wallet")
     public ResponseEntity<String> deleteWallet(@PathVariable Integer id) {
         if (walletService.deleteWallet(id)) {
-            return new ResponseEntity<>("Deleted wallet with ID: " + id, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Deleted wallet with ID: " + id, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Not able to delete wallet. No wallet with ID: " + id, HttpStatus.BAD_REQUEST);
         }

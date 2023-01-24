@@ -79,17 +79,18 @@ public class WalletService {
      *
      * @param id (Integer)
      * @return boolean
-     * Retrieves wallet based on user ID
-     * Deletes wallet from db
+     * Retrieves wallet based on ID
      * If wallet is null, no wallet exists with the ID and null is returned
+     * Deletes wallet from db
      */
     public boolean deleteWallet(Integer id) {
-        Wallet wallet = walletRepository.findById(id).orElse(null);
+        Wallet wallet = getWalletById(id);
 
         if (wallet == null) {
             return false;
         } else {
-            walletRepository.delete(getWalletById(id));
+            logger.info("(deleteWallet) Deleting wallet with ID: " + id);
+            walletRepository.delete(wallet);
             return true;
         }
     }
