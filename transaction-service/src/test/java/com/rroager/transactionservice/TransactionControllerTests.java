@@ -133,7 +133,7 @@ public class TransactionControllerTests {
                 .andExpect(jsonPath("$.transactionDate").value("2023-01-01"))
                 .andExpect(jsonPath("$.transactionType").value("DEPOSIT"));
 
-        // Does not work. No response boy
+        // Does not work. No response body
 //        mvc.perform(MockMvcRequestBuilders
 //                        .post("/api/transaction/wallet/1/create-transaction")
 //                        .accept(MediaType.APPLICATION_JSON)
