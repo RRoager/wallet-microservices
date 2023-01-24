@@ -146,18 +146,19 @@ public class UserService {
      *
      * @param id (Integer)
      * @return boolean
-     * Retrieves user based on user ID
+     * Retrieves user based on ID
      * Deletes users wallet and user from db
      * If user is null, no user exists with the ID and null is returned
      */
     public boolean deleteUser(Integer id) {
-        User user = userRepository.findById(id).orElse(null);
+        User user = getUserById(id);
 
         if (user == null) {
             return false;
         } else {
+            logger.info("(deleteUser) Deleting user with ID: " + id);
             feignClient.deleteWallet(user.getWalletId());
-            userRepository.delete(getUserById(id));
+            userRepository.delete(user);
             return true;
         }
     }
