@@ -89,7 +89,7 @@ public class UserService {
      * If user is null, no user exists with the ID and null is returned
      */
     public User updateUser(Integer id, User updatedUser) {
-        User user = userRepository.findById(id).orElse(null);
+        User user = getUserById(id);
 
         if (user != null) {
             user.setFirstName(updatedUser.getFirstName());
