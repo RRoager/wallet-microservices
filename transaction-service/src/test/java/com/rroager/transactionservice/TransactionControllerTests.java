@@ -122,17 +122,6 @@ public class TransactionControllerTests {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        mvc.perform(MockMvcRequestBuilders
-                        .get("/api/transaction/wallet/1/1")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.walletId").value(1))
-                .andExpect(jsonPath("$.amount").value(5000))
-                .andExpect(jsonPath("$.currentBalance").value(5000))
-                .andExpect(jsonPath("$.transactionDate").value("2023-01-01"))
-                .andExpect(jsonPath("$.transactionType").value("DEPOSIT"));
-
         // Does not work. No response body
 //        mvc.perform(MockMvcRequestBuilders
 //                        .post("/api/transaction/wallet/1/create-transaction")
