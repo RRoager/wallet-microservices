@@ -14,7 +14,7 @@ public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer userId; // TODO find where this should be added
+    private Integer userId;
     private Double balance;
 
     public Wallet(Integer userId) {
