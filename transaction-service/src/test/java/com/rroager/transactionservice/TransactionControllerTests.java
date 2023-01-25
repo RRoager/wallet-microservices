@@ -189,7 +189,7 @@ public class TransactionControllerTests {
 //    public void createTransactionTest_InsufficientFunds() throws Exception {
 //        Transaction testTransaction = new Transaction(1, 1, 1000000.0, 0.0, Date.valueOf("2023-01-01"), WITHDRAW);
 //
-//        when(transactionService.createTransaction(1, testTransaction)).thenThrow(FeignException);
+//        when(transactionService.createTransaction(1, testTransaction)).thenReturn(null);
 //        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(null);
 //
 //        mvc.perform(MockMvcRequestBuilders
