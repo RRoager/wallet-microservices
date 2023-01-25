@@ -21,9 +21,7 @@ import java.util.List;
 import static com.rroager.transactionservice.entity.TransactionType.DEPOSIT;
 import static com.rroager.transactionservice.entity.TransactionType.WITHDRAW;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -186,13 +184,13 @@ public class TransactionControllerTests {
     }
 
     // TODO Fix this test
-    // Returns 201 instead of 400
+    // Returns status 201 instead of 400 "Insufficient funds in wallet."
 //    @Test
 //    public void createTransactionTest_InsufficientFunds() throws Exception {
 //        Transaction testTransaction = new Transaction(1, 1, 1000000.0, 0.0, Date.valueOf("2023-01-01"), WITHDRAW);
 //
+//        when(transactionService.createTransaction(1, testTransaction)).thenThrow(FeignException);
 //        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(null);
-//        when(transactionService.createTransaction(1, testTransaction)).thenReturn(null);
 //
 //        mvc.perform(MockMvcRequestBuilders
 //                        .post("/api/transaction/wallet/1/create-transaction")

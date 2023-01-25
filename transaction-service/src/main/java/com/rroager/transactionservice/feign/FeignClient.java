@@ -11,4 +11,7 @@ public interface FeignClient {
 
     @PutMapping("wallet-service/api/wallet/update-wallet")
     WalletResponse updateWalletBalance(@RequestBody Transaction transaction);
+
+
+
 }

@@ -2,6 +2,7 @@ package com.rroager.transactionservice.controller;
 
 import com.rroager.transactionservice.entity.Transaction;
 import com.rroager.transactionservice.service.TransactionService;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,15 +36,15 @@ public class TransactionController {
     }
 
     @PostMapping("/wallet/{walletId}/create-transaction")
-    public ResponseEntity<?> createTransaction(@PathVariable Integer walletId, @RequestBody Transaction transaction) {
+    public ResponseEntity<?> createTransaction(@PathVariable Integer walletId, @RequestBody Transaction transaction) throws FeignException {
         if (transaction.getAmount() <= 0) {
             return new ResponseEntity<>("Transaction amount must be more than 0.", HttpStatus.BAD_REQUEST);
         }
 
         try {
             return new ResponseEntity<>(transactionService.createTransaction(walletId, transaction), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Insufficient funds in wallet.", HttpStatus.BAD_REQUEST);
+        } catch (FeignException exception) {
+            return new ResponseEntity<>("Insufficient funds in wallet with ID: " + walletId, HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -73,7 +73,6 @@ public class TransactionService {
      */
     public Transaction createTransaction(Integer walletId, Transaction transaction) {
         WalletResponse walletResponse = feignClient.updateWalletBalance(transaction);
-
         if (walletResponse == null) {
             return null;
         }
