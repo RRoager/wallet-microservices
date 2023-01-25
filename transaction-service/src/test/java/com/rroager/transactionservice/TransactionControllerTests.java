@@ -37,7 +37,7 @@ public class TransactionControllerTests {
     public void getTransactionByIdAndWalletIdTest() throws Exception {
         Transaction testTransaction = new Transaction(1, 1, 1500.0, 5500.0, Date.valueOf("2023-01-01"), DEPOSIT);
 
-        when(transactionService.getTransactionByIdAndWalletId(1, 1)).thenReturn(testTransaction);
+        when(transactionService.getTransactionByIdAndWalletId(testTransaction.getId(), testTransaction.getWalletId())).thenReturn(testTransaction);
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/api/transaction/wallet/1/1")
