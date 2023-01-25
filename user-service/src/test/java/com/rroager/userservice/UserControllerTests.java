@@ -3,7 +3,6 @@ package com.rroager.userservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rroager.userservice.entity.User;
 import com.rroager.userservice.feign.FeignClient;
-import com.rroager.userservice.repository.UserRepository;
 import com.rroager.userservice.response.WalletResponse;
 import com.rroager.userservice.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.sql.Date;
-import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,8 +28,6 @@ public class UserControllerTests {
     private UserService userService;
     @MockBean
     private FeignClient feignClient;
-    @MockBean
-    private UserRepository userRepository;
 
     @Test
     public void getUserByIdTest() throws Exception {
@@ -145,10 +141,6 @@ public class UserControllerTests {
         when(userService.passwordIsValid(updatedTestUser.getPassword())).thenReturn(true);
         when(userService.updateUser(testUser.getId(), updatedTestUser)).thenReturn(updatedTestUser);
         when(userService.getUserById(testUser.getId())).thenReturn(testUser);
-
-        // Are these necessary when I already mock the updateUser and getUserById calls?
-        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-        when(userRepository.save(updatedTestUser)).thenReturn(updatedTestUser);
 
         mvc.perform(MockMvcRequestBuilders
                         .put("/api/user/1/update-user")
