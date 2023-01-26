@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +26,8 @@ public class UserServiceTests {
     private UserRepository userRepository;
     @Mock
     private FeignClient feignClient;
+    @Mock
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Test
     public void getUserByIdTest_success() {
@@ -59,14 +61,42 @@ public class UserServiceTests {
         assertNull(userService.getWalletForUser(1));
     }
 
-    // TODO fix return from feign call
     @Test
-    public void createUserTest_success() {
+    public void createUserTest() {
         User testUser = new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+        WalletResponse testWalletResponse = new WalletResponse(1, 1, 5000.0);
 
         when(userRepository.save(testUser)).thenReturn(testUser);
-        when(feignClient.createWallet(testUser.getId()).getId()).thenReturn(testUser.getWalletId());
+        when(feignClient.createWallet(testUser.getId())).thenReturn(testWalletResponse);
 
         assertEquals(testUser, userService.createUser(testUser));
+    }
+
+    @Test
+    public void updatedUserTest() {
+        User beforeChangeTestUser = new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+        User afterChangeTestUser = new User("updatedRasmus", "updatedRoager", "updatedrr@test.com", "updatedTest2023!", Date.valueOf("1987-05-10"), "87654321", "2400", "updatedKøbenhavn", "updatedTestvej 12", "updatedDenmark");
+
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(beforeChangeTestUser));
+        when(userRepository.save(afterChangeTestUser)).thenReturn(afterChangeTestUser);
+
+        assertEquals(afterChangeTestUser.getFirstName(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getFirstName());
+        assertEquals(afterChangeTestUser.getLastName(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getLastName());
+        assertEquals(afterChangeTestUser.getEmail(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getEmail());
+        assertEquals(afterChangeTestUser.getDateOfBirth(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getDateOfBirth());
+        assertEquals(afterChangeTestUser.getPhoneNumber(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getPhoneNumber());
+        assertEquals(afterChangeTestUser.getZipCode(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getZipCode());
+        assertEquals(afterChangeTestUser.getCity(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getCity());
+        assertEquals(afterChangeTestUser.getAddress(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getAddress());
+        assertEquals(afterChangeTestUser.getCountry(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getCountry());
+    }
+
+    @Test
+    public void deleteUserTest() {
+        User testUser = new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
+
+        when(feignClient.deleteWallet(testUser.getWalletId())).thenReturn("Deleted wallet with ID: " + testUser.getWalletId());
+
+        assertTrue(userService.deleteUser(testUser.getId(), testUser));
     }
 }

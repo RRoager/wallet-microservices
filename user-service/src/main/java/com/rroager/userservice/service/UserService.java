@@ -61,19 +61,8 @@ public class UserService {
     public User createUser(User user) {
         logger.info("(createUser) Creating user with email: " + user.getEmail());
 
-        User newUser = new User(
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                passwordEncoder.encode(user.getPassword()),
-                user.getDateOfBirth(),
-                user.getPhoneNumber(),
-                user.getZipCode(),
-                user.getCity(),
-                user.getAddress(),
-                user.getCountry());
-        userRepository.save(newUser);
-
+        User newUser = userRepository.save(user);
+        setUserData(user, newUser);
         newUser.setWalletId(feignClient.createWallet(newUser.getId()).getId());
 
         return userRepository.save(newUser);
@@ -88,29 +77,32 @@ public class UserService {
      * Saves user to db
      * If user is null, no user exists with the ID and null is returned
      */
-    public User updateUser(Integer id, User updatedUser) {
-        User user = getUserById(id);
+    public User updateUser(Integer id, User updatedUser, User user) {
+        logger.info("(updateUser) Updating user with ID: " + id);
 
-        if (user != null) {
-            user.setFirstName(updatedUser.getFirstName());
-            user.setLastName(updatedUser.getLastName());
-            user.setEmail(updatedUser.getEmail());
-            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-            user.setDateOfBirth(updatedUser.getDateOfBirth());
-            user.setPhoneNumber(updatedUser.getPhoneNumber());
-            user.setZipCode(updatedUser.getZipCode());
-            user.setCity(updatedUser.getCity());
-            user.setAddress(updatedUser.getAddress());
-            user.setCountry(updatedUser.getCountry());
+        setUserData(updatedUser, user);
+        userRepository.save(user);
 
-            logger.info("(updateUser) Updating user with ID: " + user.getId());
+        return user;
+    }
 
-            userRepository.save(user);
-
-            return user;
-        }
-
-        return null;
+    /**
+     *
+     * @param updatedUser (User)
+     * @param user (User)
+     * Set new user data
+     */
+    private void setUserData(User updatedUser, User user) {
+        user.setFirstName(updatedUser.getFirstName());
+        user.setLastName(updatedUser.getLastName());
+        user.setEmail(updatedUser.getEmail());
+        user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        user.setDateOfBirth(updatedUser.getDateOfBirth());
+        user.setPhoneNumber(updatedUser.getPhoneNumber());
+        user.setZipCode(updatedUser.getZipCode());
+        user.setCity(updatedUser.getCity());
+        user.setAddress(updatedUser.getAddress());
+        user.setCountry(updatedUser.getCountry());
     }
 
     /**
@@ -150,17 +142,11 @@ public class UserService {
      * Deletes users wallet and user from db
      * If user is null, no user exists with the ID and null is returned
      */
-    public boolean deleteUser(Integer id) {
-        User user = getUserById(id);
-
-        if (user == null) {
-            return false;
-        } else {
-            logger.info("(deleteUser) Deleting user with ID: " + id);
-            feignClient.deleteWallet(user.getWalletId());
-            userRepository.delete(user);
-            return true;
-        }
+    public boolean deleteUser(Integer id, User user) {
+        logger.info("(deleteUser) Deleting user with ID: " + id);
+        feignClient.deleteWallet(user.getWalletId());
+        userRepository.delete(user);
+        return true;
     }
 
 }

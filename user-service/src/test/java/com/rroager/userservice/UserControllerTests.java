@@ -139,7 +139,7 @@ public class UserControllerTests {
 
         when(userService.userWithEmailExists(updatedTestUser.getEmail())).thenReturn(false);
         when(userService.passwordIsValid(updatedTestUser.getPassword())).thenReturn(true);
-        when(userService.updateUser(testUser.getId(), updatedTestUser)).thenReturn(updatedTestUser);
+        when(userService.updateUser(testUser.getId(), updatedTestUser, testUser)).thenReturn(updatedTestUser);
         when(userService.getUserById(testUser.getId())).thenReturn(testUser);
 
         mvc.perform(MockMvcRequestBuilders
@@ -192,8 +192,7 @@ public class UserControllerTests {
     public void deleteUserTest_success() throws Exception {
         User testUser = new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
-        when(userService.deleteUser(testUser.getId())).thenReturn(true);
-        when(userService.getUserById(testUser.getId())).thenReturn(testUser);
+        when(userService.deleteUser(testUser.getId(), testUser)).thenReturn(true);
         when(feignClient.deleteWallet(testUser.getWalletId())).thenReturn("Deleted wallet with ID: " + testUser.getWalletId());
 
         mvc.perform(MockMvcRequestBuilders
@@ -205,7 +204,7 @@ public class UserControllerTests {
 
     @Test
     public void deleteUserTest_userDoesNotExist() throws Exception {
-        when(userService.deleteUser(99)).thenReturn(false);
+        when(userService.deleteUser(99, new User())).thenReturn(false);
         when(userService.getUserById(99)).thenReturn(null);
 
         mvc.perform(MockMvcRequestBuilders
