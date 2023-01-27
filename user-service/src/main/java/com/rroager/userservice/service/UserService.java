@@ -142,11 +142,17 @@ public class UserService {
      * Deletes users wallet and user from db
      * If user is null, no user exists with the ID and null is returned
      */
-    public boolean deleteUser(Integer id, User user) {
-        logger.info("(deleteUser) Deleting user with ID: " + id);
-        feignClient.deleteWallet(user.getWalletId());
-        userRepository.delete(user);
-        return true;
+    public boolean deleteUser(Integer id) {
+        User user = getUserById(id);
+
+        if (user == null) {
+            return false;
+        } else {
+            logger.info("(deleteWallet) Deleting wallet with ID: " + id);
+            feignClient.deleteWallet(user.getWalletId());
+            userRepository.delete(user);
+            return true;
+        }
     }
 
 }
