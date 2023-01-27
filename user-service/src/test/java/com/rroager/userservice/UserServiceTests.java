@@ -95,8 +95,9 @@ public class UserServiceTests {
     public void deleteUserTest() {
         User testUser = new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
 
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(testUser));
         when(feignClient.deleteWallet(testUser.getWalletId())).thenReturn("Deleted wallet with ID: " + testUser.getWalletId());
 
-        assertTrue(userService.deleteUser(testUser.getId(), testUser));
+        assertTrue(userService.deleteUser(testUser.getId()));
     }
 }

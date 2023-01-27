@@ -113,7 +113,7 @@ public class WalletControllerTests {
         mvc.perform(MockMvcRequestBuilders
                         .delete("/api/wallet/99/delete-wallet")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().string("Not able to delete wallet. No wallet with ID: 99"));
     }
 
