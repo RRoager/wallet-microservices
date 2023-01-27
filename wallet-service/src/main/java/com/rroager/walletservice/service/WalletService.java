@@ -51,9 +51,7 @@ public class WalletService {
      * Subtracts transactionRequest amount from balance if WITHDRAW and enough balance in wallet
      * Saves wallet with new balance
      */
-    public Wallet updateWalletBalance(TransactionRequest transactionRequest) {
-        Wallet wallet = getWalletById(transactionRequest.getWalletId());
-
+    public Wallet updateWalletBalance(TransactionRequest transactionRequest, Wallet wallet) {
         if (transactionRequest.getTransactionType().equals(TransactionRequest.TransactionType.DEPOSIT)) {
             wallet.setBalance(wallet.getBalance() + transactionRequest.getAmount());
 
