@@ -60,7 +60,7 @@ public class WalletControllerTests {
         TransactionRequest testTransactionRequest = new TransactionRequest(1, 5000.0, TransactionRequest.TransactionType.DEPOSIT);
         Wallet testWallet = new Wallet(1, 1, 10000.0);
 
-        when(walletService.updateWalletBalance(testTransactionRequest)).thenReturn(testWallet);
+        when(walletService.updateWalletBalance(testTransactionRequest, testWallet)).thenReturn(testWallet);
         when(walletService.getWalletById(testTransactionRequest.getWalletId())).thenReturn(testWallet);
 
         mvc.perform(MockMvcRequestBuilders
@@ -80,7 +80,7 @@ public class WalletControllerTests {
         Wallet testWallet = new Wallet(1, 1, 10000.0);
 
         when(walletService.getWalletById(testTransactionRequest.getWalletId())).thenReturn(testWallet);
-        when(walletService.updateWalletBalance(testTransactionRequest)).thenReturn(null);
+        when(walletService.updateWalletBalance(testTransactionRequest, testWallet)).thenReturn(null);
 
 
         mvc.perform(MockMvcRequestBuilders
