@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -110,7 +112,7 @@ public class TransactionControllerTests {
         Transaction testTransaction = new Transaction(1, 1, 5000.0, 0.0, Date.valueOf("2023-01-01"), DEPOSIT);
         testTransaction.setCurrentBalance(testWalletResponse.getBalance());
 
-        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(testWalletResponse);
+        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(new ResponseEntity<>(testWalletResponse, HttpStatus.OK));
         when(transactionService.createTransaction(1, testTransaction)).thenReturn(testTransaction);
         when(transactionService.getTransactionByIdAndWalletId(1, 1)).thenReturn(testTransaction);
 
@@ -143,7 +145,7 @@ public class TransactionControllerTests {
         Transaction testTransaction = new Transaction(1, 1, 5000.0, 10000.0, Date.valueOf("2023-01-01"), WITHDRAW);
         testTransaction.setCurrentBalance(testWalletResponse.getBalance());
 
-        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(testWalletResponse);
+        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(new ResponseEntity<>(testWalletResponse, HttpStatus.OK));
         when(transactionService.createTransaction(1, testTransaction)).thenReturn(testTransaction);
         when(transactionService.getTransactionByIdAndWalletId(1, 1)).thenReturn(testTransaction);
 

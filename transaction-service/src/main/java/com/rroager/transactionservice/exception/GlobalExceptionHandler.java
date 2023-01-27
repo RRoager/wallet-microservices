@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(FeignException.class)
-    public String handleFeignStatusException(FeignException exception, HttpServletResponse response) {
+    public int handleFeignStatusException(FeignException exception, HttpServletResponse response) {
         response.setStatus(exception.status());
-        return "FeignException with HttpStatusCode: " + exception.status();
+        return response.getStatus();
     }
 }

@@ -40,11 +40,15 @@ public class TransactionController {
         if (transaction.getAmount() <= 0) {
             return new ResponseEntity<>("Transaction amount must be more than 0.", HttpStatus.BAD_REQUEST);
         }
-
         try {
             return new ResponseEntity<>(transactionService.createTransaction(walletId, transaction), HttpStatus.CREATED);
         } catch (FeignException exception) {
-            return new ResponseEntity<>("Insufficient funds in wallet with ID: " + walletId, HttpStatus.BAD_REQUEST);
+            if (exception.status() == 400) {
+                return new ResponseEntity<>("Insufficient funds in wallet with ID: " + walletId, HttpStatus.BAD_REQUEST);
+            } else if (exception.status() == 404) {
+                return new ResponseEntity<>("No wallet with ID: " + walletId, HttpStatus.NOT_FOUND);
+            }
         }
+        return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
     }
 }

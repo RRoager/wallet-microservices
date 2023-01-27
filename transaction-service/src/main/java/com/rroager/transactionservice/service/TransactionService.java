@@ -72,7 +72,8 @@ public class TransactionService {
      * Creates new transaction for a specific walletId with details given and saves to db
      */
     public Transaction createTransaction(Integer walletId, Transaction transaction) {
-        WalletResponse walletResponse = feignClient.updateWalletBalance(transaction);
+        transaction.setWalletId(walletId);
+        WalletResponse walletResponse = feignClient.updateWalletBalance(transaction).getBody();
         if (walletResponse == null) {
             return null;
         }
