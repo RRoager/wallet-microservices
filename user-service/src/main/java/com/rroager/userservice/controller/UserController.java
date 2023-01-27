@@ -21,7 +21,7 @@ public class UserController {
         if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("No user with ID: " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("No user with ID: " + id, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -31,7 +31,7 @@ public class UserController {
         if (user != null) {
             return new ResponseEntity<>(userService.getWalletForUser(user.getWalletId()), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Not able to show wallet. No user with ID: " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Not able to show wallet. No user with ID: " + id, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -52,7 +52,7 @@ public class UserController {
     public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody User updatedUser) {
         User user = userService.getUserById(id);
         if (user == null) {
-            return new ResponseEntity<>("Not able to update user. No user with ID: " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Not able to update user. No user with ID: " + id, HttpStatus.NOT_FOUND);
         }
 
         if (updatedUser.getEmail().equalsIgnoreCase(userService.getUserById(id).getEmail()) || !userService.userWithEmailExists(updatedUser.getEmail())) {
@@ -74,7 +74,7 @@ public class UserController {
             userService.deleteUser(id, user);
             return new ResponseEntity<>("Deleted user with ID: " + id, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Not able to delete user. No user with ID: " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Not able to delete user. No user with ID: " + id, HttpStatus.NOT_FOUND);
         }
     }
 
