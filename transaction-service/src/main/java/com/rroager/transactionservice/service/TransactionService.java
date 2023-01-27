@@ -68,7 +68,7 @@ public class TransactionService {
      * @param transaction (Transaction)
      * @return Transaction
      * Sends transaction to WalletService for wallet balance to be updated
-     * If wallet has insufficient funds null is received
+     * If wallet does not exist or has insufficient funds null is received as well as a HttpStatus which is handled by the GlobalExceptionHandler
      * Creates new transaction for a specific walletId with details given and saves to db
      */
     public Transaction createTransaction(Integer walletId, Transaction transaction) {
