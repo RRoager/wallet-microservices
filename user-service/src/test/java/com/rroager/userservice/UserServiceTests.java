@@ -6,6 +6,9 @@ import com.rroager.userservice.repository.UserRepository;
 import com.rroager.userservice.response.WalletResponse;
 import com.rroager.userservice.service.UserService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Date;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -74,23 +78,31 @@ public class UserServiceTests {
         assertEquals(testUser, userService.createUser(testUser));
     }
 
-    @Test
-    public void updatedUserTest() {
-        User beforeChangeTestUser = new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
-        User afterChangeTestUser = new User("updatedRasmus", "updatedRoager", "updatedrr@test.com", "updatedTest2023!", Date.valueOf("1987-05-10"), "87654321", "2400", "updatedKøbenhavn", "updatedTestvej 12", "updatedDenmark");
+    @ParameterizedTest
+    @MethodSource("userAndUpdatedUser")
+    public void updatedUserTest(User input, User output) {
 
-        when(userRepository.findById(anyInt())).thenReturn(Optional.of(beforeChangeTestUser));
-        when(userRepository.save(afterChangeTestUser)).thenReturn(afterChangeTestUser);
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(input));
+        when(userRepository.save(output)).thenReturn(output);
 
-        assertEquals(afterChangeTestUser.getFirstName(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getFirstName());
-        assertEquals(afterChangeTestUser.getLastName(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getLastName());
-        assertEquals(afterChangeTestUser.getEmail(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getEmail());
-        assertEquals(afterChangeTestUser.getDateOfBirth(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getDateOfBirth());
-        assertEquals(afterChangeTestUser.getPhoneNumber(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getPhoneNumber());
-        assertEquals(afterChangeTestUser.getZipCode(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getZipCode());
-        assertEquals(afterChangeTestUser.getCity(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getCity());
-        assertEquals(afterChangeTestUser.getAddress(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getAddress());
-        assertEquals(afterChangeTestUser.getCountry(), userService.updateUser(1, afterChangeTestUser, beforeChangeTestUser).getCountry());
+        assertEquals(output.getFirstName(), userService.updateUser(1, output, input).getFirstName());
+        assertEquals(output.getLastName(), userService.updateUser(1, output, input).getLastName());
+        assertEquals(output.getEmail(), userService.updateUser(1, output, input).getEmail());
+        assertEquals(output.getDateOfBirth(), userService.updateUser(1, output, input).getDateOfBirth());
+        assertEquals(output.getPhoneNumber(), userService.updateUser(1, output, input).getPhoneNumber());
+        assertEquals(output.getZipCode(), userService.updateUser(1, output, input).getZipCode());
+        assertEquals(output.getCity(), userService.updateUser(1, output, input).getCity());
+        assertEquals(output.getAddress(), userService.updateUser(1, output, input).getAddress());
+        assertEquals(output.getCountry(), userService.updateUser(1, output, input).getCountry());
+    }
+
+    private static Stream<Arguments> userAndUpdatedUser() {
+        return Stream.of(
+                Arguments.of(new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark"),
+                        new User(1, 1,"UpdatedRasmus", "UpdatedRoager", "updateduser@test.com", "UpdatedTest2023!", Date.valueOf("1987-05-10"), "87654321", "2400", "København", "Testvej 12", "Denmark")),
+                Arguments.of(new User(1, 1,"Bjarne", "Goldbaek", "bg@test.com", "Bjarne123!", Date.valueOf("1950-01-15"), "12345678", "4000", "Roskilde", "Testvej 12", "Denmark"),
+                        new User(1, 1,"UpdatedBjarne", "UpdatedGoldbaek", "updatedbg@test.com", "UpdatedBjarne123!", Date.valueOf("1951-01-15"), "87654321", "2400", "København", "Testvej 12", "Denmark"))
+        );
     }
 
     @Test
