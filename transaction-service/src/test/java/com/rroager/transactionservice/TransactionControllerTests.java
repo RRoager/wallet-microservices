@@ -5,7 +5,9 @@ import com.rroager.transactionservice.entity.Transaction;
 import com.rroager.transactionservice.feign.FeignClient;
 import com.rroager.transactionservice.response.WalletResponse;
 import com.rroager.transactionservice.service.TransactionService;
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +24,7 @@ import java.util.List;
 
 import static com.rroager.transactionservice.entity.TransactionType.DEPOSIT;
 import static com.rroager.transactionservice.entity.TransactionType.WITHDRAW;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -172,24 +175,22 @@ public class TransactionControllerTests {
                 .andExpect(content().string("Transaction amount must be more than 0."));
     }
 
-    // TODO Fix this test
-    // Returns status 201 instead of 400 "Insufficient funds in wallet."
-//    @Test
-//    public void createTransactionTest_InsufficientFunds() throws Exception {
-//        Transaction testTransaction = new Transaction(1, 1, 1000000.0, 0.0, Date.valueOf("2023-01-01"), WITHDRAW);
-//        FeignException feignException = Mockito.mock(FeignException.class);
-//        when(feignException.status()).thenReturn(400);
-//
-//        when(feignClient.updateWalletBalance(testTransaction)).thenThrow(feignException);
-//        when(transactionService.createTransaction(1, testTransaction)).thenThrow(feignException);
-//
-//        mvc.perform(MockMvcRequestBuilders
-//                        .post("/api/transaction/wallet/1/create-transaction")
-//                        .content(asJsonString(testTransaction))
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().string("Insufficient funds in wallet."));
-//    }
+    @Test
+    public void createTransactionTest_InsufficientFunds() throws Exception {
+        Transaction testTransaction = new Transaction(1, 1, 1000000.0, 0.0, Date.valueOf("2023-01-01"), WITHDRAW);
+        FeignException feignException = Mockito.mock(FeignException.class);
+        when(feignException.status()).thenReturn(400);
+
+        when(feignClient.updateWalletBalance(any())).thenThrow(feignException);
+        when(transactionService.createTransaction(1, testTransaction)).thenThrow(feignException);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/transaction/wallet/1/create-transaction")
+                        .content(asJsonString(testTransaction))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Insufficient funds in wallet with ID: " + testTransaction.getWalletId()));
+    }
 
     // Converts object to JSON string
     public static String asJsonString(final Object obj) {
