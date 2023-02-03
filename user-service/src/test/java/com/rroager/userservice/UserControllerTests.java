@@ -6,6 +6,9 @@ import com.rroager.userservice.feign.FeignClient;
 import com.rroager.userservice.response.WalletResponse;
 import com.rroager.userservice.service.UserService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.sql.Date;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -134,20 +138,19 @@ public class UserControllerTests {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Test
-    public void updateUserTest_success() throws Exception {
-        User testUser = new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark");
-        User updatedTestUser = new User(1, 1,"UpdatedRasmus", "UpdatedRoager", "updateduser@test.com", "UpdatedTest2023!", Date.valueOf("1987-05-10"), "87654321", "2400", "København", "Testvej 12", "Denmark");
+    @ParameterizedTest
+    @MethodSource("userAndUpdatedUser")
+    public void updateUserTest_success(User input, User output) throws Exception {
 
-        when(userService.userWithEmailExists(updatedTestUser.getEmail())).thenReturn(false);
-        when(userService.passwordIsValid(updatedTestUser.getPassword())).thenReturn(true);
-        when(userService.updateUser(testUser.getId(), updatedTestUser, testUser)).thenReturn(updatedTestUser);
-        when(userService.getUserById(testUser.getId())).thenReturn(testUser);
+        when(userService.userWithEmailExists(output.getEmail())).thenReturn(false);
+        when(userService.passwordIsValid(output.getPassword())).thenReturn(true);
+        when(userService.updateUser(input.getId(), output, input)).thenReturn(output);
+        when(userService.getUserById(input.getId())).thenReturn(input);
 
         mvc.perform(MockMvcRequestBuilders
                         .put("/api/user/1/update-user")
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(updatedTestUser))
+                        .content(asJsonString(output))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -161,6 +164,13 @@ public class UserControllerTests {
                 .andExpect(jsonPath("$.city").value("København"))
                 .andExpect(jsonPath("$.address").value("Testvej 12"))
                 .andExpect(jsonPath("$.country").value("Denmark"));
+    }
+
+    private static Stream<Arguments> userAndUpdatedUser() {
+        return Stream.of(
+                Arguments.of(new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark"),
+                        new User(1, 1,"UpdatedRasmus", "UpdatedRoager", "updateduser@test.com", "UpdatedTest2023!", Date.valueOf("1987-05-10"), "87654321", "2400", "København", "Testvej 12", "Denmark"))
+        );
     }
 
     @Test
