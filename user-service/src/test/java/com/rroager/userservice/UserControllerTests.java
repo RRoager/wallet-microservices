@@ -153,23 +153,25 @@ public class UserControllerTests {
                         .content(asJsonString(output))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.walletId").value(1))
-                .andExpect(jsonPath("$.firstName").value("UpdatedRasmus"))
-                .andExpect(jsonPath("$.lastName").value("UpdatedRoager"))
-                .andExpect(jsonPath("$.email").value("updateduser@test.com"))
-                .andExpect(jsonPath("$.dateOfBirth").value("1987-05-10"))
-                .andExpect(jsonPath("$.phoneNumber").value("87654321"))
-                .andExpect(jsonPath("$.zipCode").value("2400"))
-                .andExpect(jsonPath("$.city").value("København"))
-                .andExpect(jsonPath("$.address").value("Testvej 12"))
-                .andExpect(jsonPath("$.country").value("Denmark"));
+                .andExpect(jsonPath("$.id").value(output.getId()))
+                .andExpect(jsonPath("$.walletId").value(output.getWalletId()))
+                .andExpect(jsonPath("$.firstName").value(output.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(output.getLastName()))
+                .andExpect(jsonPath("$.email").value(output.getEmail()))
+                .andExpect(jsonPath("$.dateOfBirth").value(output.getDateOfBirth().toString()))
+                .andExpect(jsonPath("$.phoneNumber").value(output.getPhoneNumber()))
+                .andExpect(jsonPath("$.zipCode").value(output.getZipCode()))
+                .andExpect(jsonPath("$.city").value(output.getCity()))
+                .andExpect(jsonPath("$.address").value(output.getAddress()))
+                .andExpect(jsonPath("$.country").value(output.getCountry()));
     }
 
     private static Stream<Arguments> userAndUpdatedUser() {
         return Stream.of(
                 Arguments.of(new User(1, 1,"Rasmus", "Roager", "rr@test.com", "Test2023!", Date.valueOf("1987-05-10"), "12345678", "2400", "København", "Testvej 12", "Denmark"),
-                        new User(1, 1,"UpdatedRasmus", "UpdatedRoager", "updateduser@test.com", "UpdatedTest2023!", Date.valueOf("1987-05-10"), "87654321", "2400", "København", "Testvej 12", "Denmark"))
+                        new User(1, 1,"UpdatedRasmus", "UpdatedRoager", "updateduser@test.com", "UpdatedTest2023!", Date.valueOf("1987-05-10"), "87654321", "2400", "København", "Testvej 12", "Denmark")),
+                Arguments.of(new User(1, 1,"Bjarne", "Goldbaek", "bg@test.com", "Bjarne123!", Date.valueOf("1950-01-15"), "12345678", "4000", "Roskilde", "Testvej 12", "Denmark"),
+                        new User(1, 1,"UpdatedBjarne", "UpdatedGoldbaek", "updatedbg@test.com", "UpdatedBjarne123!", Date.valueOf("1951-01-15"), "87654321", "2400", "København", "Testvej 12", "Denmark"))
         );
     }
 
