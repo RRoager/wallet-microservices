@@ -74,12 +74,11 @@ public class TransactionService {
     public Transaction createTransaction(Integer walletId, Transaction transaction) {
         transaction.setWalletId(walletId);
         WalletResponse walletResponse = feignClient.updateWalletBalance(transaction).getBody();
-        if (walletResponse == null) {
-            return null;
+        if (walletResponse != null) {
+            logger.info("(createTransaction) Creating transaction for wallet with ID: " + walletId);
+
+            return transactionRepository.save(new Transaction(transaction.getWalletId(), transaction.getAmount(), walletResponse.getBalance(), transaction.getTransactionType()));
         }
-
-        logger.info("(createTransaction) Creating transaction for wallet with ID: " + walletId);
-
-        return transactionRepository.save(new Transaction(transaction.getWalletId(), transaction.getAmount(), walletResponse.getBalance(), transaction.getTransactionType()));
+        return null;
     }
 }
