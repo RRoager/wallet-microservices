@@ -1,6 +1,12 @@
 package com.rroager.walletservice.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,13 +14,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 @Entity
 @Table(name = "wallets")
 public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer userId; // TODO find where this should be added
+    private Integer userId;
     private Double balance;
 
     public Wallet(Integer userId) {

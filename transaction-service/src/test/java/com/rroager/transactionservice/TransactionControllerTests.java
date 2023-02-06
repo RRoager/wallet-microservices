@@ -5,12 +5,16 @@ import com.rroager.transactionservice.entity.Transaction;
 import com.rroager.transactionservice.feign.FeignClient;
 import com.rroager.transactionservice.response.WalletResponse;
 import com.rroager.transactionservice.service.TransactionService;
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -20,6 +24,7 @@ import java.util.List;
 
 import static com.rroager.transactionservice.entity.TransactionType.DEPOSIT;
 import static com.rroager.transactionservice.entity.TransactionType.WITHDRAW;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -39,7 +44,7 @@ public class TransactionControllerTests {
     public void getTransactionByIdAndWalletIdTest() throws Exception {
         Transaction testTransaction = new Transaction(1, 1, 1500.0, 5500.0, Date.valueOf("2023-01-01"), DEPOSIT);
 
-        when(transactionService.getTransactionByIdAndWalletId(1, 1)).thenReturn(testTransaction);
+        when(transactionService.getTransactionByIdAndWalletId(testTransaction.getId(), testTransaction.getWalletId())).thenReturn(testTransaction);
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/api/transaction/wallet/1/1")
@@ -105,14 +110,13 @@ public class TransactionControllerTests {
                 .andExpect(jsonPath("$[1].transactionType").value("WITHDRAW"));
     }
 
-    // TODO Confirm this test is correct
     @Test
     public void createTransactionTest_depositSuccess() throws Exception {
         WalletResponse testWalletResponse = new WalletResponse(1, 5000.0);
         Transaction testTransaction = new Transaction(1, 1, 5000.0, 0.0, Date.valueOf("2023-01-01"), DEPOSIT);
         testTransaction.setCurrentBalance(testWalletResponse.getBalance());
 
-        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(testWalletResponse);
+        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(new ResponseEntity<>(testWalletResponse, HttpStatus.OK));
         when(transactionService.createTransaction(1, testTransaction)).thenReturn(testTransaction);
         when(transactionService.getTransactionByIdAndWalletId(1, 1)).thenReturn(testTransaction);
 
@@ -138,14 +142,13 @@ public class TransactionControllerTests {
 //                .andExpect(jsonPath("$.transactionType").value("DEPOSIT"));
     }
 
-    // TODO Confirm this test is correct
     @Test
     public void createTransactionTest_withdrawSuccess() throws Exception {
         WalletResponse testWalletResponse = new WalletResponse(1, 5000.0);
         Transaction testTransaction = new Transaction(1, 1, 5000.0, 10000.0, Date.valueOf("2023-01-01"), WITHDRAW);
         testTransaction.setCurrentBalance(testWalletResponse.getBalance());
 
-        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(testWalletResponse);
+        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(new ResponseEntity<>(testWalletResponse, HttpStatus.OK));
         when(transactionService.createTransaction(1, testTransaction)).thenReturn(testTransaction);
         when(transactionService.getTransactionByIdAndWalletId(1, 1)).thenReturn(testTransaction);
 
@@ -155,19 +158,6 @@ public class TransactionControllerTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
-
-//        mvc.perform(MockMvcRequestBuilders
-//                        .post("/api/transaction/wallet/1/create-transaction")
-//                        .accept(MediaType.APPLICATION_JSON)
-//                        .content(asJsonString(testTransaction))
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("$.id").value(1))
-//                .andExpect(jsonPath("$.walletId").value(1))
-//                .andExpect(jsonPath("$.amount").value(5000))
-//                .andExpect(jsonPath("$.currentBalance").value(5000))
-//                .andExpect(jsonPath("$.transactionDate").value("2023-01-01"))
-//                .andExpect(jsonPath("$.transactionType").value("WITHDRAW"));
     }
 
     @Test
@@ -185,22 +175,22 @@ public class TransactionControllerTests {
                 .andExpect(content().string("Transaction amount must be more than 0."));
     }
 
-    // TODO Fix this test
-    // Returns 201 instead of 400
-//    @Test
-//    public void createTransactionTest_InsufficientFunds() throws Exception {
-//        Transaction testTransaction = new Transaction(1, 1, 1000000.0, 0.0, Date.valueOf("2023-01-01"), WITHDRAW);
-//
-//        when(feignClient.updateWalletBalance(testTransaction)).thenReturn(null);
-//        when(transactionService.createTransaction(1, testTransaction)).thenReturn(null);
-//
-//        mvc.perform(MockMvcRequestBuilders
-//                        .post("/api/transaction/wallet/1/create-transaction")
-//                        .content(asJsonString(testTransaction))
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().string("Insufficient funds in wallet."));
-//    }
+    @Test
+    public void createTransactionTest_InsufficientFunds() throws Exception {
+        Transaction testTransaction = new Transaction(1, 1, 1000000.0, 0.0, Date.valueOf("2023-01-01"), WITHDRAW);
+        FeignException feignException = Mockito.mock(FeignException.class);
+        when(feignException.status()).thenReturn(400);
+
+        when(feignClient.updateWalletBalance(any())).thenThrow(feignException);
+        when(transactionService.createTransaction(1, testTransaction)).thenThrow(feignException);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/transaction/wallet/1/create-transaction")
+                        .content(asJsonString(testTransaction))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Insufficient funds in wallet with ID: " + testTransaction.getWalletId()));
+    }
 
     // Converts object to JSON string
     public static String asJsonString(final Object obj) {

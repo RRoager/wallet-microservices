@@ -68,18 +68,17 @@ public class TransactionService {
      * @param transaction (Transaction)
      * @return Transaction
      * Sends transaction to WalletService for wallet balance to be updated
-     * If wallet has insufficient funds null is received
+     * If wallet does not exist or has insufficient funds null is received as well as a HttpStatus which is handled by the GlobalExceptionHandler
      * Creates new transaction for a specific walletId with details given and saves to db
      */
     public Transaction createTransaction(Integer walletId, Transaction transaction) {
-        WalletResponse walletResponse = feignClient.updateWalletBalance(transaction);
+        transaction.setWalletId(walletId);
+        WalletResponse walletResponse = feignClient.updateWalletBalance(transaction).getBody();
+        if (walletResponse != null) {
+            logger.info("(createTransaction) Creating transaction for wallet with ID: " + walletId);
 
-        if (walletResponse == null) {
-            return null;
+            return transactionRepository.save(new Transaction(transaction.getWalletId(), transaction.getAmount(), walletResponse.getBalance(), transaction.getTransactionType()));
         }
-
-        logger.info("(createTransaction) Creating transaction for wallet with ID: " + walletId);
-
-        return transactionRepository.save(new Transaction(transaction.getWalletId(), transaction.getAmount(), walletResponse.getBalance(), transaction.getTransactionType()));
+        return null;
     }
 }

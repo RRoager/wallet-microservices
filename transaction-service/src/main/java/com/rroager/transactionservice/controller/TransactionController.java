@@ -2,9 +2,15 @@ package com.rroager.transactionservice.controller;
 
 import com.rroager.transactionservice.entity.Transaction;
 import com.rroager.transactionservice.service.TransactionService;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
 import java.util.List;
@@ -35,15 +41,19 @@ public class TransactionController {
     }
 
     @PostMapping("/wallet/{walletId}/create-transaction")
-    public ResponseEntity<?> createTransaction(@PathVariable Integer walletId, @RequestBody Transaction transaction) {
+    public ResponseEntity<?> createTransaction(@PathVariable Integer walletId, @RequestBody Transaction transaction) throws FeignException {
         if (transaction.getAmount() <= 0) {
             return new ResponseEntity<>("Transaction amount must be more than 0.", HttpStatus.BAD_REQUEST);
         }
-
         try {
             return new ResponseEntity<>(transactionService.createTransaction(walletId, transaction), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Insufficient funds in wallet.", HttpStatus.BAD_REQUEST);
+        } catch (FeignException exception) {
+            if (exception.status() == 400) {
+                return new ResponseEntity<>("Insufficient funds in wallet with ID: " + walletId, HttpStatus.BAD_REQUEST);
+            } else if (exception.status() == 404) {
+                return new ResponseEntity<>("No wallet with ID: " + walletId, HttpStatus.NOT_FOUND);
+            }
         }
+        return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

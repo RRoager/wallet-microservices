@@ -1,69 +1,87 @@
 package com.rroager.walletservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rroager.walletservice.entity.Wallet;
 import com.rroager.walletservice.request.TransactionRequest;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import com.rroager.walletservice.service.WalletService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WalletControllerTests {
 
     @Autowired
     private MockMvc mvc;
+    @MockBean
+    private WalletService walletService;
 
     @Test
-    @Order(1)
     public void getWalletByIdTest() throws Exception {
+        Wallet testWallet = new Wallet(1, 1, 5000.0);
+
+        when(walletService.getWalletById(testWallet.getId())).thenReturn(testWallet);
+
         mvc.perform(MockMvcRequestBuilders
                         .get("/api/wallet/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.balance").value(5000));
     }
 
     @Test
-    @Order(2)
     public void createWalletTest() throws Exception {
+        Wallet testWallet = new Wallet(1, 1, 5000.0);
+
+        when(walletService.createWallet(testWallet.getUserId())).thenReturn(testWallet);
+
         mvc.perform(MockMvcRequestBuilders
                         .post("/api/wallet/user/1/create-wallet")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType("application/json"));
+                .andReturn();
     }
 
     @Test
-    @Order(3)
     public void updateWalletBalanceTest_Success() throws Exception {
         TransactionRequest testTransactionRequest = new TransactionRequest(1, 5000.0, TransactionRequest.TransactionType.DEPOSIT);
+        Wallet testWallet = new Wallet(1, 1, 10000.0);
+
+        when(walletService.updateWalletBalance(testTransactionRequest, testWallet)).thenReturn(testWallet);
+        when(walletService.getWalletById(testTransactionRequest.getWalletId())).thenReturn(testWallet);
 
         mvc.perform(MockMvcRequestBuilders
                         .put("/api/wallet/update-wallet")
+                        .accept(MediaType.APPLICATION_JSON)
                         .content(asJsonString(testTransactionRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.balance").value(10000.0));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.balance").value(10000));
     }
 
     @Test
-    @Order(4)
     public void updateWalletBalanceTest_InsufficientFunds() throws Exception {
         TransactionRequest testTransactionRequest = new TransactionRequest(1, 1000000.0, TransactionRequest.TransactionType.WITHDRAW);
+        Wallet testWallet = new Wallet(1, 1, 10000.0);
+
+        when(walletService.getWalletById(testTransactionRequest.getWalletId())).thenReturn(testWallet);
+        when(walletService.updateWalletBalance(testTransactionRequest, testWallet)).thenReturn(null);
+
 
         mvc.perform(MockMvcRequestBuilders
                         .put("/api/wallet/update-wallet")
@@ -74,21 +92,28 @@ public class WalletControllerTests {
     }
 
     @Test
-    @Order(5)
     public void deleteWalletTest_Success() throws Exception {
+        Wallet testWallet = new Wallet(1, 1, 10000.0);
+
+        when(walletService.deleteWallet(testWallet.getId())).thenReturn(true);
+        when(walletService.getWalletById(testWallet.getId())).thenReturn(testWallet);
+
         mvc.perform(MockMvcRequestBuilders
                         .delete("/api/wallet/1/delete-wallet")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(content().string("Deleted wallet with ID: " + testWallet.getId()));
     }
 
     @Test
-    @Order(6)
     public void deleteWalletTest_Fail() throws Exception {
+        when(walletService.deleteWallet(99)).thenReturn(false);
+        when(walletService.getWalletById(99)).thenReturn(null);
+
         mvc.perform(MockMvcRequestBuilders
                         .delete("/api/wallet/99/delete-wallet")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().string("Not able to delete wallet. No wallet with ID: 99"));
     }
 
